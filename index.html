@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATM Mobility & Therapy | Personal Training & Therapeutic Care – GTA</title>
+<meta name="description" content="ATM Mobility & Therapy — personal training, therapeutic bodywork, and adaptive care at our GTA wellness center. Serving neurodiverse youth, chronic conditions, and recovery clients.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#c8102e;--red2:#a50d24;--red3:#e8294a;
+  --blk:#0f0f0f;--blk2:#1a1a1a;--blk3:#242424;
+  --sil:#b8b8b8;--sil2:#e0e0e0;
+  --wht:#ffffff;--off:#f4f4f4;
+  --mid:#555;--light:#888;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--wht);color:var(--blk);overflow-x:hidden}
+
+/* ── LOGO ── */
+.logo{display:flex;align-items:center;gap:0;text-decoration:none;line-height:1;flex-shrink:0}
+.logo-atm{font-family:'Bebas Neue',sans-serif;font-size:1.85rem;color:var(--red);letter-spacing:.03em}
+.logo-bar{width:2px;height:22px;background:var(--sil);margin:0 7px;border-radius:1px;flex-shrink:0}
+.logo-tag{font-size:.56rem;font-weight:600;color:var(--sil);letter-spacing:.11em;text-transform:uppercase;line-height:1.35}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:999;
+  background:rgba(15,15,15,.97);
+  border-bottom:2px solid var(--red2);
+  height:62px;display:flex;align-items:center;padding:0 4%;
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;width:100%}
+.nav-links{display:flex;align-items:center;gap:0;list-style:none}
+.nav-links a{
+  color:var(--sil);text-decoration:none;font-size:.78rem;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:.38rem .6rem;border-radius:3px;
+  transition:color .18s,background .18s;white-space:nowrap
+}
+.nav-links a:hover{color:var(--wht);background:rgba(200,16,46,.2)}
+.nav-links a.hl{background:var(--red);color:var(--wht)!important;padding:.38rem .9rem}
+.nav-links a.hl:hover{background:var(--red3)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--sil);border-radius:1px;transition:.3s}
+
+/* ── HERO — full bleed photo with text overlay ── */
+.hero{
+  position:relative;
+  height:100vh;min-height:580px;
+  display:flex;align-items:flex-end;
+  overflow:hidden;
+  padding-top:62px;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background-image:url('fst.jpg');
+  background-size:cover;
+  background-position:center 30%;
+  transform:scale(1.03);
+  transition:transform 8s ease;
+}
+.hero-bg.loaded{transform:scale(1)}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(
+    to right,
+    rgba(15,15,15,.88) 0%,
+    rgba(15,15,15,.7) 40%,
+    rgba(15,15,15,.25) 75%,
+    rgba(15,15,15,.1) 100%
+  );
+}
+@media(max-width:700px){
+  .hero-overlay{background:rgba(15,15,15,.52)!important}
+  .hero-overlay2{background:linear-gradient(to top,rgba(15,15,15,.7) 0%,transparent 60%)!important}
+}
+.hero-overlay2{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(15,15,15,.8) 0%,transparent 50%);
+}
+.hero-content{
+  position:relative;z-index:2;
+  padding:0 5% 5rem;
+  max-width:660px;
+}
+.hero-eyebrow{
+  display:flex;align-items:center;gap:.6rem;margin-bottom:1.2rem;
+  animation:fadeUp .7s .1s both;
+}
+.eline{width:24px;height:3px;background:var(--red);border-radius:2px}
+.etext{font-size:.68rem;font-weight:600;color:var(--sil);letter-spacing:.14em;text-transform:uppercase}
+.hero h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(3.5rem,8vw,6.5rem);
+  color:var(--wht);line-height:.92;
+  letter-spacing:.02em;
+  margin-bottom:1.2rem;
+  animation:fadeUp .7s .2s both;
+}
+.hero h1 .r{color:var(--red)}
+.hero h1 .s{color:var(--sil)}
+.hero-sub{
+  font-size:1rem;color:rgba(255,255,255,.65);
+  line-height:1.7;max-width:440px;
+  margin-bottom:2rem;font-weight:300;
+  animation:fadeUp .7s .3s both;
+}
+.hero-btns{
+  display:flex;gap:.9rem;flex-wrap:wrap;
+  margin-bottom:2.5rem;
+  animation:fadeUp .7s .4s both;
+}
+.btn-r{
+  background:var(--red);color:var(--wht);
+  padding:.8rem 1.8rem;border-radius:3px;
+  text-decoration:none;font-weight:600;font-size:.85rem;
+  letter-spacing:.06em;text-transform:uppercase;
+  border:2px solid var(--red);
+  transition:background .2s,transform .15s;
+  display:inline-block;
+}
+.btn-r:hover{background:var(--red3);border-color:var(--red3);transform:translateY(-1px)}
+.btn-w{
+  border:2px solid rgba(255,255,255,.4);color:rgba(255,255,255,.85);
+  padding:.8rem 1.8rem;border-radius:3px;
+  text-decoration:none;font-weight:600;font-size:.85rem;
+  letter-spacing:.06em;text-transform:uppercase;
+  transition:border-color .2s,color .2s;
+  display:inline-block;
+}
+.btn-w:hover{border-color:var(--wht);color:var(--wht)}
+.hero-stats{
+  display:flex;gap:2rem;flex-wrap:wrap;
+  animation:fadeUp .7s .5s both;
+}
+.hstat{border-left:3px solid var(--red);padding-left:.9rem}
+.hstat-n{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--wht);line-height:1}
+.hstat-l{font-size:.65rem;color:var(--sil);text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+
+/* ── SHARED SECTION STYLES ── */
+.sec{padding:80px 5%}
+.eyebrow{display:flex;align-items:center;gap:.55rem;margin-bottom:.75rem}
+.eyebrow .ln{width:22px;height:3px;background:var(--red);border-radius:2px}
+.eyebrow span{font-size:.68rem;font-weight:700;color:var(--red);letter-spacing:.13em;text-transform:uppercase}
+h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3rem);letter-spacing:.02em;line-height:.95;margin-bottom:1rem}
+.r{color:var(--red)}
+.sub{font-size:.97rem;color:var(--mid);line-height:1.72;max-width:540px}
+
+/* ── OUR SPACE ── */
+.space-sec{background:var(--blk)}
+.space-sec h2{color:var(--wht)}
+.space-sec .sub{color:rgba(255,255,255,.5);max-width:100%}
+.space-layout{display:flex;flex-direction:column;gap:2.5rem}
+.space-text{max-width:600px}
+.space-feats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.5rem 0 2rem}
+.sfeat{background:rgba(255,255,255,.04);border:1px solid rgba(200,16,46,.2);border-radius:4px;padding:1rem;border-top:2px solid var(--red)}
+.sfeat h4{font-size:.82rem;font-weight:700;color:var(--wht);letter-spacing:.06em;margin-bottom:.15rem;text-transform:uppercase}
+.sfeat p{font-size:.72rem;color:rgba(255,255,255,.38);line-height:1.5}
+.space-photos{display:grid;grid-template-columns:2fr 1fr 1fr;gap:4px;height:320px}
+.sphoto{overflow:hidden;position:relative}
+.sphoto img{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;transition:transform .4s}
+.sphoto:hover img{transform:scale(1.04)}
+
+/* ── SERVICES GRID ── */
+.svc-sec{background:var(--off)}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;margin-top:2rem;background:rgba(0,0,0,.1);border-radius:6px;overflow:hidden}
+.scard{background:var(--wht);text-decoration:none;display:block;transition:box-shadow .2s}
+.scard:hover .simg img{transform:scale(1.06)}
+.scard:hover .sbody{border-top-color:var(--red)}
+.simg{height:185px;overflow:hidden}
+.simg img{width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;transition:transform .45s}
+.sbody{padding:1.1rem 1.3rem 1.3rem;border-top:3px solid transparent;transition:border-color .2s}
+.sbody h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.04em;margin-bottom:.28rem;color:var(--blk)}
+.sbody p{font-size:.83rem;color:var(--mid);line-height:1.6;margin-bottom:.6rem}
+.sprice{font-size:.76rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.07em}
+
+/* ── ABOUT ── */
+.about-sec{background:var(--wht)}
+.about-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.photo-cluster{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pcluster-photo{overflow:hidden;border-radius:3px}
+.pcluster-photo img{width:100%;height:220px;object-fit:cover;display:block;transition:transform .4s}
+.pcluster-photo:hover img{transform:scale(1.04)}
+.pcluster-photo.wide{grid-column:1/-1}
+.pcluster-photo.wide img{height:260px}
+.about-note{background:var(--off);border-left:4px solid var(--red);padding:.9rem 1.1rem;font-size:.87rem;color:var(--mid);line-height:1.65;margin:1.2rem 0 1.5rem;border-radius:0 3px 3px 0}
+.about-note strong{color:var(--blk)}
+
+/* ── ADAPTIVE ── */
+.adaptive-sec{background:var(--blk)}
+.adaptive-sec h2{color:var(--wht)}
+.adaptive-sec .sub{color:rgba(255,255,255,.5);max-width:100%}
+.adaptive-layout{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:stretch}
+.adapt-photo{overflow:hidden;position:relative;min-height:460px}
+.adapt-photo img{width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block}
+.adapt-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,transparent 60%,rgba(15,15,15,.6) 100%)}
+.adapt-content{padding:4rem 4rem 4rem 4rem;display:flex;flex-direction:column;justify-content:center}
+.atags{display:flex;flex-wrap:wrap;gap:.4rem;margin:1.2rem 0}
+.atag{background:rgba(200,16,46,.12);border:1px solid rgba(200,16,46,.28);color:var(--red);font-size:.7rem;font-weight:700;padding:.22rem .6rem;border-radius:2px;letter-spacing:.06em;text-transform:uppercase}
+.alist{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.8rem}
+.alist li{display:flex;align-items:center;gap:.7rem;font-size:.92rem;color:rgba(255,255,255,.62)}
+.alist li::before{content:'';width:6px;height:6px;min-width:6px;background:var(--red);border-radius:50%}
+
+/* ── TEAM ── */
+.team-sec{background:var(--off)}
+.team-intro{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;margin-bottom:2.5rem}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1.2rem}
+.tcard{background:var(--wht);border-bottom:3px solid transparent;padding:1.5rem;transition:border-color .2s,box-shadow .2s}
+.tcard:hover{border-color:var(--red);box-shadow:0 4px 18px rgba(0,0,0,.07)}
+.tavatar{width:48px;height:48px;border-radius:50%;background:var(--blk);color:var(--wht);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;margin-bottom:.85rem;border:2px solid var(--red)}
+.tcard h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.04em;margin-bottom:.12rem}
+.trole{font-size:.68rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.55rem}
+.tcard p{font-size:.82rem;color:var(--mid);line-height:1.6}
+.join-card{background:var(--blk);padding:1.5rem;border-bottom:3px solid var(--red);display:flex;flex-direction:column;gap:1rem;justify-content:space-between}
+.join-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--wht);letter-spacing:.04em}
+.join-card p{font-size:.79rem;color:rgba(255,255,255,.42);line-height:1.6}
+.btn-rsm{background:var(--red);color:var(--wht);padding:.5rem 1rem;border-radius:3px;text-decoration:none;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:inline-block;transition:background .2s}
+.btn-rsm:hover{background:var(--red3)}
+
+/* ── GALLERY ── */
+.gallery-sec{background:var(--blk);padding:60px 0}
+.gallery-head{padding:0 5% 1.6rem}
+.gallery-sec h2{color:var(--wht)}
+.gstrip{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.gitem{position:relative;overflow:hidden;aspect-ratio:3/4}
+.gitem img{width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;transition:transform .45s}
+.gitem:hover img{transform:scale(1.08)}
+.govly{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,15,15,.88) 0%,transparent 55%);opacity:0;transition:opacity .3s;display:flex;align-items:flex-end;padding:.65rem}
+.govly span{font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--wht);letter-spacing:.06em;transform:translateY(5px);transition:transform .3s}
+.gitem:hover .govly{opacity:1}
+.gitem:hover .govly span{transform:translateY(0)}
+.gitem::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--red);transform:scaleX(0);transition:transform .3s;z-index:2}
+.gitem:hover::after{transform:scaleX(1)}
+
+/* ── CONTACT ── */
+.contact-sec{background:var(--wht)}
+.contact-layout{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+.c-rows{display:flex;flex-direction:column;gap:.85rem;margin-top:1.5rem}
+.crow{display:flex;align-items:center;gap:.85rem;font-size:.93rem;color:var(--mid)}
+.cicon{width:36px;height:36px;background:var(--red);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.58rem;flex-shrink:0;color:var(--wht);font-weight:700;letter-spacing:.04em;font-family:'Barlow',sans-serif}
+.crow a{color:var(--red);text-decoration:none}
+.crow a:hover{text-decoration:underline}
+.cform h3{font-family:'Bebas Neue',sans-serif;font-size:1.65rem;letter-spacing:.04em;margin-bottom:1.2rem}
+.fg{margin-bottom:.85rem}
+.fg label{display:block;font-size:.68rem;font-weight:700;color:var(--light);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.32rem}
+.fg input,.fg textarea,.fg select{width:100%;background:var(--off);border:1.5px solid rgba(0,0,0,.1);border-radius:3px;padding:.62rem .82rem;color:var(--blk);font-family:'Barlow',sans-serif;font-size:.92rem;outline:none;transition:border-color .2s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--red)}
+.fg textarea{min-height:82px;resize:vertical}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+
+/* ── FOOTER ── */
+footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.9rem}
+.flinks{display:flex;gap:1rem;flex-wrap:wrap}
+.flinks a{color:var(--sil);text-decoration:none;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.flinks a:hover{color:var(--red)}
+.fcopy{font-size:.7rem;color:rgba(255,255,255,.22)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1000px){
+  .space-feats{grid-template-columns:repeat(2,1fr)}
+  .space-photos{grid-template-columns:1fr 1fr;height:240px}
+  .space-photos .sphoto:last-child{display:none}
+  .adaptive-layout{grid-template-columns:1fr}
+  .adapt-photo{min-height:300px}
+  .adapt-content{padding:2.5rem 5%}
+  .about-layout,.team-intro,.contact-layout{grid-template-columns:1fr;gap:2.5rem}
+}
+@media(max-width:700px){
+  .nav-links{display:none;flex-direction:column;position:fixed;top:62px;left:0;right:0;background:rgba(15,15,15,.98);padding:1.5rem 5%;gap:.35rem;border-top:1px solid rgba(200,16,46,.3)}
+  .nav-links.open{display:flex}
+  .hamburger{display:flex}
+  .hero h1{font-size:3.2rem}
+  .gstrip{grid-template-columns:repeat(3,1fr)}
+  .svc-grid{grid-template-columns:1fr}
+  .team-grid{grid-template-columns:1fr 1fr}
+  .fg-row{grid-template-columns:1fr}
+  .space-feats{grid-template-columns:1fr 1fr}
+  .space-photos{grid-template-columns:1fr 1fr;height:200px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-atm">ATM</span>
+      <span class="logo-bar"></span>
+      <span class="logo-tag">Mobility<br>&amp; Therapy</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="our-space.html">Our Space</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="personal-training.html">Training</a>
+    <a href="adaptive-training.html">Adaptive</a></li>
+      <li><a href="therapeutic-services.html">Therapeutic</a></li>
+      <li><a href="team.html">Team</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="https://atmmobility.noterro.com" target="_blank" class="hl book-trigger">Book Now</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-overlay2"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="eline"></div>
+      <span class="etext">Greater Toronto Area</span>
+    </div>
+    <h1>TRAIN.<br><span class="r">RECOVER.</span><br><span class="s">THRIVE.</span></h1>
+    <p class="hero-sub">Personal training, therapeutic bodywork, and specialized adaptive care — at our wellness center or wherever you need us across the GTA.</p>
+    <div class="hero-btns">
+      <a href="https://atmmobility.noterro.com" target="_blank" class="btn-r book-trigger">Book a Session</a>
+      <a href="#services" class="btn-w">Explore Services</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-n">FST</div><div class="hstat-l">Certified</div></div>
+      <div class="hstat"><div class="hstat-n">GTA</div><div class="hstat-l">Coverage</div></div>
+      <div class="hstat"><div class="hstat-n">5+</div><div class="hstat-l">Practitioners</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- OUR SPACE -->
+<section id="space" class="sec space-sec reveal">
+  <div class="space-layout">
+    <div class="space-text">
+      <div class="eyebrow"><div class="ln"></div><span>Our Facility</span></div>
+      <h2>A PROFESSIONAL <span class="r">WELLNESS CENTER</span></h2>
+      <p class="sub">Fully equipped facility in the GTA — dedicated training studio, private treatment rooms, and sauna suite. We also offer mobile sessions for clients who prefer home visits.</p>
+      <div class="space-feats">
+        <div class="sfeat"><h4>Training Studio</h4><p>Strength &amp; conditioning space</p></div>
+        <div class="sfeat"><h4>Treatment Room</h4><p>Private massage &amp; FST room</p></div>
+        <div class="sfeat"><h4>Sauna Blanket</h4><p>Infrared sauna blanket sessions</p></div>
+        <div class="sfeat"><h4>Mobile Available</h4><p>Most services come to you</p></div>
+      </div>
+      <a href="https://atmmobility.noterro.com" target="_blank" class="btn-r book-trigger">Book at Our Center</a>
+    </div>
+    <div class="space-photos">
+      <div class="sphoto"><img style="object-position:center 50%" src="hotstone.jpg" alt="Treatment room" loading="lazy"></div>
+      <div class="sphoto"><img style="object-position:center 40%" src="sauna.jpg" alt="Sauna therapy" loading="lazy"></div>
+      <div class="sphoto"><img style="object-position:center 62%" src="thai.jpg" alt="Thai massage" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="sec svc-sec reveal">
+  <div class="eyebrow"><div class="ln"></div><span>What We Offer</span></div>
+  <h2>OUR <span class="r">SERVICES</span></h2>
+  <p class="sub">From high-performance training to therapeutic recovery — something for every goal and every body.</p>
+  <div class="svc-grid">
+    <a href="personal-training.html" class="scard">
+      <div class="simg"><img style="object-position:center 40%" src="training.jpg" alt="Personal Training" loading="lazy" ></div>
+      <div class="sbody"><h3>Personal Training</h3><p>One-on-one coaching built around your goals — strength, weight loss, mobility, or performance.</p><div class="sprice">Contact for Pricing →</div></div>
+    </a>
+    <a href="adaptive-training.html" class="scard">
+      <div class="simg"><img style="object-position:center 35%" src="fst.jpg" alt="Adaptive Training" loading="lazy" ></div>
+      <div class="sbody"><h3>Adaptive Training</h3><p>Patient, sensory-aware training for neurodiverse youth tailored to your child's unique needs.</p><div class="sprice">Custom Pricing →</div></div>
+    </a>
+    <a href="therapeutic-services.html" class="scard">
+      <div class="simg"><img style="object-position:center 35%" src="fst.jpg" alt="FST Therapy" loading="lazy"></div>
+      <div class="sbody"><h3>FST Stretch Therapy</h3><p>Fascial Stretch Therapy for improved mobility, pain relief, and chronic condition recovery.</p><div class="sprice">$115 / hour</div></div>
+    </a>
+    <a href="personal-training.html" class="scard">
+      <div class="simg"><img style="object-position:center 28%" src="boxercise.jpg" alt="Boxercise HIIT" loading="lazy" ></div>
+      <div class="sbody"><h3>Boxercise HIIT</h3><p>Boxing-inspired high-intensity cardio. Build strength, burn fat, and have fun doing it.</p><div class="sprice">Contact for Pricing</div></div>
+    </a>
+    <a href="therapeutic-services.html" class="scard">
+      <div class="simg"><img style="object-position:center 50%" src="hotstone.jpg" alt="Hot Stone Massage" loading="lazy"></div>
+      <div class="sbody"><h3>Hot Stone Massage</h3><p>Deep muscle release through therapeutic heat. Ideal for chronic tension and recovery.</p><div class="sprice">$160 / hour</div></div>
+    </a>
+    <a href="therapeutic-services.html" class="scard">
+      <div class="simg"><img style="object-position:center 62%" src="thai.jpg" alt="Thai Massage" loading="lazy" ></div>
+      <div class="sbody"><h3>Thai Massage</h3><p>Traditional assisted stretching with acupressure for full-body relief and flexibility.</p><div class="sprice">$140 / hour</div></div>
+    </a>
+    <a href="https://atmmobility.noterro.com" target="_blank" class="scard book-trigger">
+      <div class="simg"><img style="object-position:center 40%" src="sauna.jpg" alt="Sauna Blanket Therapy" loading="lazy"></div>
+      <div class="sbody"><h3>Sauna Blanket Therapy</h3><p>Infrared sauna sessions for detox, circulation, muscle recovery, and deep relaxation.</p><div class="sprice">Contact for Pricing</div></div>
+    </a>
+    <a href="personal-training.html" class="scard">
+      <div class="simg"><img style="object-position:center 55%" src="group.jpg" alt="Group Training" loading="lazy" ></div>
+      <div class="sbody"><h3>Group Training</h3><p>Small group sessions for families, friends, or teams. Motivating and results-driven.</p><div class="sprice">Contact for Pricing</div></div>
+    </a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="sec about-sec reveal">
+  <div class="about-layout">
+    <div class="photo-cluster">
+      <div class="pcluster-photo wide"><img style="object-position:center 40%" src="training.jpg" alt="Training studio" loading="lazy"></div>
+      <div class="pcluster-photo"><img style="object-position:center 35%" src="boxercise.jpg" alt="Boxercise" loading="lazy"></div>
+      <div class="pcluster-photo"><img style="object-position:center 55%" src="group.jpg" alt="Group training" loading="lazy"></div>
+    </div>
+    <div>
+      <div class="eyebrow"><div class="ln"></div><span>In-Studio &amp; Mobile</span></div>
+      <h2>YOUR CENTER. <span class="r">YOUR SPACE.</span></h2>
+      <p style="font-size:.97rem;color:var(--mid);line-height:1.75;margin-bottom:1rem">ATM Mobility &amp; Therapy is first and foremost a wellness center — a professional facility where clients train, recover, and feel their best. We have a dedicated training studio, a private treatment room, and full equipment for every service.</p>
+      <div class="about-note"><strong>We also come to you.</strong> For clients who prefer home visits — including neurodiverse youth, those with mobility challenges, or busy schedules — most services are available across the GTA. Travel fee applies.</div>
+      <a href="https://atmmobility.noterro.com" target="_blank" class="btn-r book-trigger">Book a Session</a>
+    </div>
+  </div>
+</section>
+
+<!-- ADAPTIVE -->
+<section id="adaptive" class="adaptive-sec reveal">
+  <div class="adaptive-layout">
+    <div class="adapt-photo">
+      <img style="object-position:center 40%" src="training.jpg" alt="Adaptive training for neurodiverse youth">
+    </div>
+    <div class="adapt-content">
+      <div class="eyebrow"><div class="ln"></div><span>Specialized Care</span></div>
+      <h2>ADAPTIVE <span class="r">TRAINING</span></h2>
+      <p class="sub">Patient, structured training for neurodiverse youth — built around your child's learning style, sensory needs, and comfort level.</p>
+      <div class="atags">
+        <span class="atag">Autism Spectrum</span>
+        <span class="atag">ADHD</span>
+        <span class="atag">Sensory Processing</span>
+        <span class="atag">Dev. Coordination</span>
+      </div>
+      <ul class="alist">
+        <li>Sensory-aware, low-pressure environment</li>
+        <li>Flexible pacing — every session adapts</li>
+        <li>Functional movement and confidence focus</li>
+        <li>Available at our center or your home</li>
+      </ul>
+      <a href="adaptive-training.html" class="btn-r">Learn More →</a>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="practitioners" class="sec team-sec reveal">
+  <div class="team-intro">
+    <div>
+      <div class="eyebrow"><div class="ln"></div><span>Our Team</span></div>
+      <h2>THE PEOPLE <span class="r">BEHIND ATM</span></h2>
+      <p class="sub">A growing team of certified practitioners — each bringing specialized expertise to our wellness center.</p>
+    </div>
+    <div>
+      <p style="font-size:.95rem;color:var(--mid);line-height:1.75;margin-bottom:1.2rem">ATM Mobility &amp; Therapy operates as a wellness hub — Anthony leads and a team of independent practitioners share professional space, each bringing their specialty to serve our growing client base.</p>
+      <a href="#contact" class="btn-r">Join Our Team →</a>
+    </div>
+  </div>
+  <div class="team-grid">
+    <div class="tcard"><div class="tavatar">AM</div><h3>Anthony McLean</h3><div class="trole">Founder &amp; Head Trainer</div><p>Certified personal trainer, movement specialist, and adaptive training lead. Completing RMT license August 2026.</p></div>
+    <div class="tcard"><div class="tavatar">AW</div><h3>Althea Williams</h3><div class="trole">Wellness &amp; Body Contouring</div><p>Specialist in wellness services and body contouring treatments.</p></div>
+    <div class="tcard"><div class="tavatar">SO</div><h3>Seyi Oladipo</h3><div class="trole">Registered Massage Therapist</div><p>RMT offering therapeutic massage for recovery and chronic conditions.</p></div>
+    <div class="tcard"><div class="tavatar">RF</div><h3>Roxanne Fisher</h3><div class="trole">Brow &amp; Lash Specialist</div><p>Expert brow and lash technician at our wellness center.</p></div>
+    <div class="tcard"><div class="tavatar">SM</div><h3>Steven Marfo</h3><div class="trole">Personal Trainer</div><p>Certified personal trainer delivering strength and conditioning programs.</p></div>
+    <div class="tcard"><div class="tavatar">MX</div><h3>Matt X</h3><div class="trole">Registered Massage Therapist</div><p>RMT specializing in therapeutic massage and soft tissue recovery.</p></div>
+    <div class="join-card"><h3>Join Our Center</h3><p>Wellness practitioner looking for professional space? Flexible rooms with a revenue-sharing model.</p><a href="https://atm-practice.onrender.com/practitioner-application" target="_blank" class="btn-rsm">Apply to Join →</a></div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<div id="gallery" class="gallery-sec reveal">
+  <div class="gallery-head">
+    <div class="eyebrow"><div class="ln"></div><span>See Our Work</span></div>
+    <h2>IN <span class="r">ACTION</span></h2>
+  </div>
+  <div class="gstrip">
+    <div class="gitem"><img style="object-position:center 40%" src="training.jpg" alt="Personal Training" loading="lazy"><div class="govly"><span>Personal Training</span></div></div>
+    <div class="gitem"><img style="object-position:center 28%" src="boxercise.jpg" alt="Boxercise HIIT" loading="lazy"><div class="govly"><span>Boxercise HIIT</span></div></div>
+    <div class="gitem"><img style="object-position:center 40%" src="sauna.jpg" alt="Sauna Therapy" loading="lazy"><div class="govly"><span>Sauna Therapy</span></div></div>
+    <div class="gitem"><img style="object-position:center 55%" src="group.jpg" alt="Group Training" loading="lazy"><div class="govly"><span>Group Training</span></div></div>
+    <div class="gitem"><img style="object-position:center 62%" src="thai.jpg" alt="Thai Massage" loading="lazy"><div class="govly"><span>Thai Massage</span></div></div>
+    <div class="gitem"><img style="object-position:center 50%" src="hotstone.jpg" alt="Hot Stone Massage" loading="lazy"><div class="govly"><span>Hot Stone Massage</span></div></div>
+    <div class="gitem"><img style="object-position:center 35%" src="fst.jpg" alt="FST Therapy" loading="lazy"><div class="govly"><span>FST Therapy</span></div></div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<section id="contact" class="sec contact-sec reveal">
+  <div class="contact-layout">
+    <div class="contact-info">
+      <div class="eyebrow"><div class="ln"></div><span>Get in Touch</span></div>
+      <h2>LET'S <span class="r">TALK</span></h2>
+      <p class="sub">Questions about services, the center, or practitioner space? We're here.</p>
+      <div class="c-rows">
+        <div class="crow"><div class="cicon">E</div><span><a href="mailto:info@atmmobility.com">info@atmmobility.com</a></span></div>
+        <div class="crow"><div class="cicon">A</div><span>542 Champagne Dr., North York, ON</span></div>
+        <div class="crow"><div class="cicon">IG</div><span><a href="https://instagram.com/a2mfitness" target="_blank">@a2mfitness</a></span></div>
+        <div class="crow"><div class="cicon">BK</div><span><a href="https://atmmobility.noterro.com" target="_blank">atmmobility.noterro.com</a></span></div>
+      </div>
+    </div>
+    <div class="cform">
+      <h3>Send a Message</h3>
+      <div class="fg-row">
+        <div class="fg"><label>First Name</label><input type="text" placeholder="First"></div>
+        <div class="fg"><label>Last Name</label><input type="text" placeholder="Last"></div>
+      </div>
+      <div class="fg"><label>Email</label><input type="email" placeholder="you@email.com"></div>
+      <div class="fg">
+        <label>I'm interested in</label>
+        <select>
+          <option>Personal Training</option>
+          <option>Adaptive Training (Neurodiverse Youth)</option>
+          <option>FST / Therapeutic Services</option>
+          <option>Practitioner Space Rental</option>
+          <option>General Inquiry</option>
+        </select>
+      </div>
+      <div class="fg"><label>Message</label><textarea id="msgText" placeholder="Tell us about your goals or questions…"></textarea></div>
+      <button class="btn-r" id="sendBtn" style="width:100%;text-align:center;cursor:pointer;border:none;font-family:'Barlow',sans-serif;font-size:.85rem;padding:.8rem">Send Message</button>
+      <p id="sendConfirm" style="display:none;margin-top:.8rem;font-size:.83rem;color:var(--mid);text-align:center">✓ Opening your email client… If it doesn't open, email us directly at <a href="mailto:info@atmmobility.com">info@atmmobility.com</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="index.html" class="logo">
+    <span class="logo-atm">ATM</span>
+    <span class="logo-bar"></span>
+    <span class="logo-tag" style="color:rgba(255,255,255,.3)">Mobility<br>&amp; Therapy</span>
+  </a>
+  <div class="flinks">
+    <a href="our-space.html">Our Space</a>
+    <a href="services.html">Services</a>
+    <a href="personal-training.html">Training</a>
+    <a href="adaptive-training.html">Adaptive</a>
+    <a href="therapeutic-services.html">Therapeutic</a>
+    <a href="team.html">Team</a>
+    <a href="https://instagram.com/a2mfitness" target="_blank">@a2mfitness</a>
+    <a href="https://atmmobility.noterro.com" target="_blank" style="color:var(--red)">Book Now</a>
+  </div>
+  <div class="fcopy">© 2025 ATM Mobility &amp; Therapy · Greater Toronto Area</div>
+</footer>
+
+<script>
+// Hamburger
+const hbg = document.getElementById('hamburger');
+const nl = document.getElementById('navLinks');
+hbg.addEventListener('click', () => nl.classList.toggle('open'));
+nl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => nl.classList.remove('open')));
+
+// Hero bg fade-in
+window.addEventListener('load', () => {
+  const bg = document.getElementById('heroBg');
+  bg.classList.add('loaded');
+});
+
+// Scroll reveal
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+// Contact form → mailto
+document.getElementById('sendBtn').addEventListener('click', () => {
+  const firstName = document.querySelector('input[placeholder="First"]').value.trim();
+  const lastName  = document.querySelector('input[placeholder="Last"]').value.trim();
+  const email     = document.querySelector('input[type="email"]').value.trim();
+  const service   = document.querySelector('select').value;
+  const message   = document.getElementById('msgText').value.trim();
+  if (!firstName || !email || !message) {
+    alert('Please fill in your first name, email, and message.');
+    return;
+  }
+  const subject = encodeURIComponent('Inquiry: ' + service);
+  const body = encodeURIComponent(
+    'Name: ' + firstName + ' ' + lastName + '\n' +
+    'Email: ' + email + '\n' +
+    'Service: ' + service + '\n\n' +
+    message
+  );
+  window.location.href = 'mailto:info@atmmobility.com?subject=' + subject + '&body=' + body;
+  document.getElementById('sendConfirm').style.display = 'block';
+});
+
+// Booking modal (Noterro inline)
+function openBooking() {
+  const overlay = document.getElementById('bookingOverlay');
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeBooking() {
+  document.getElementById('bookingOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.book-trigger').forEach(el => {
+  el.addEventListener('click', e => { e.preventDefault(); openBooking(); });
+});
+document.getElementById('bookingOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeBooking();
+});
+</script>
+<!-- BOOKING MODAL -->
+<div id="bookingOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--wht);border-radius:6px;width:100%;max-width:860px;height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.2rem;background:var(--blk);border-bottom:2px solid var(--red)">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--wht);letter-spacing:.06em">BOOK A SESSION</span>
+      <button onclick="closeBooking()" style="background:none;border:none;color:var(--sil);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem .5rem" aria-label="Close">&times;</button>
+    </div>
+    <iframe src="https://atmmobility.noterro.com" style="flex:1;border:none;width:100%" title="Book a session at ATM Mobility & Therapy"></iframe>
+  </div>
+</div>
+
+</body>
+</html>
