@@ -587,33 +587,8 @@ document.getElementById('sendBtn').addEventListener('click', () => {
   document.getElementById('sendConfirm').style.display = 'block';
 });
 
-// Booking modal (Noterro inline)
-function openBooking() {
-  const overlay = document.getElementById('bookingOverlay');
-  overlay.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-function closeBooking() {
-  document.getElementById('bookingOverlay').style.display = 'none';
-  document.body.style.overflow = '';
-}
-document.querySelectorAll('.book-trigger').forEach(el => {
-  el.addEventListener('click', e => { e.preventDefault(); openBooking(); });
-});
-document.getElementById('bookingOverlay').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeBooking();
-});
+// Booking: opens in new tab via href
 </script>
-<!-- BOOKING MODAL -->
-<div id="bookingOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:1rem">
-  <div style="background:var(--wht);border-radius:6px;width:100%;max-width:860px;height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.2rem;background:var(--blk);border-bottom:2px solid var(--red)">
-      <span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--wht);letter-spacing:.06em">BOOK A SESSION</span>
-      <button onclick="closeBooking()" style="background:none;border:none;color:var(--sil);font-size:1.4rem;cursor:pointer;line-height:1;padding:.2rem .5rem" aria-label="Close">&times;</button>
-    </div>
-    <iframe src="https://atmmobility.noterro.com" style="flex:1;border:none;width:100%" title="Book a session at ATM Mobility & Therapy"></iframe>
-  </div>
-</div>
 
 </body>
 </html>
