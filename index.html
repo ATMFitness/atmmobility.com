@@ -167,16 +167,20 @@ h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3rem);letter-spa
 
 /* ── SERVICES GRID ── */
 .svc-sec{background:var(--off)}
-.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;margin-top:2rem;background:rgba(0,0,0,.1);border-radius:6px;overflow:hidden}
-.scard{background:var(--wht);text-decoration:none;display:block;transition:box-shadow .2s}
+.svc-cols{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem}
+.svc-col-head{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:2px solid var(--red)}
+.svc-col-head span{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.08em;color:var(--blk)}
+.svc-col-head .col-icon{width:28px;height:28px;background:var(--red);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700;color:var(--wht);letter-spacing:.04em}
+.svc-grid{display:flex;flex-direction:column;gap:2px;background:rgba(0,0,0,.06);border-radius:4px;overflow:hidden}
+.scard{background:var(--wht);text-decoration:none;display:flex;align-items:stretch;transition:box-shadow .2s}
 .scard:hover .simg img{transform:scale(1.06)}
-.scard:hover .sbody{border-top-color:var(--red)}
-.simg{height:185px;overflow:hidden}
+.scard:hover .sbody{border-left-color:var(--red)}
+.simg{width:110px;min-width:110px;overflow:hidden}
 .simg img{width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;transition:transform .45s}
-.sbody{padding:1.1rem 1.3rem 1.3rem;border-top:3px solid transparent;transition:border-color .2s}
-.sbody h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.04em;margin-bottom:.28rem;color:var(--blk)}
-.sbody p{font-size:.83rem;color:var(--mid);line-height:1.6;margin-bottom:.6rem}
-.sprice{font-size:.76rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.07em}
+.sbody{padding:.85rem 1rem;border-left:3px solid transparent;transition:border-color .2s;flex:1}
+.sbody h3{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.04em;margin-bottom:.18rem;color:var(--blk)}
+.sbody p{font-size:.78rem;color:var(--mid);line-height:1.55;margin-bottom:.4rem}
+.sprice{font-size:.72rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.07em}
 
 /* ── ABOUT ── */
 .about-sec{background:var(--wht)}
@@ -280,7 +284,8 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
   .hamburger{display:flex}
   .hero h1{font-size:3.2rem}
   .gstrip{grid-template-columns:repeat(3,1fr)}
-  .svc-grid{grid-template-columns:1fr}
+  .svc-cols{grid-template-columns:1fr}
+  .simg{width:90px;min-width:90px}
   .team-grid{grid-template-columns:1fr 1fr}
   .fg-row{grid-template-columns:1fr}
   .space-feats{grid-template-columns:1fr 1fr}
@@ -376,7 +381,7 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
       <div class="eline"></div>
       <span class="etext">Greater Toronto Area</span>
     </div>
-    <h1>TRAIN.<br><span class="r">RECOVER.</span><br><span class="s">THRIVE.</span></h1>
+    <h1>MOVE.<br><span class="r">RECOVER.</span><br><span class="s">THRIVE.</span></h1>
     <p class="hero-sub">Personal training, therapeutic bodywork, and specialized adaptive care — at our wellness center or wherever you need us across the GTA.</p>
     <div class="hero-btns">
       <a href="https://atmmobility.noterro.com" target="_blank" class="btn-r book-trigger">Book a Session</a>
@@ -417,40 +422,52 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
 <section id="services" class="sec svc-sec reveal">
   <div class="eyebrow"><div class="ln"></div><span>What We Offer</span></div>
   <h2>OUR <span class="r">SERVICES</span></h2>
-  <p class="sub">From high-performance training to therapeutic recovery — something for every goal and every body.</p>
-  <div class="svc-grid">
-    <a href="personal-training.html" class="scard">
-      <div class="simg"><img style="object-position:center 40%" src="training.jpg" alt="Personal Training" loading="lazy" ></div>
-      <div class="sbody"><h3>Personal Training</h3><p>One-on-one coaching built around your goals — strength, weight loss, mobility, or performance.</p><div class="sprice">Contact for Pricing →</div></div>
-    </a>
-    <a href="adaptive-training.html" class="scard">
-      <div class="simg"><img style="object-position:center 35%" src="fst.jpg" alt="Adaptive Training" loading="lazy" ></div>
-      <div class="sbody"><h3>Adaptive Training</h3><p>Patient, sensory-aware training for neurodiverse youth tailored to your child's unique needs.</p><div class="sprice">Custom Pricing →</div></div>
-    </a>
-    <a href="therapeutic-services.html" class="scard">
-      <div class="simg"><img style="object-position:center 35%" src="fst.jpg" alt="FST Therapy" loading="lazy"></div>
-      <div class="sbody"><h3>FST Stretch Therapy</h3><p>Fascial Stretch Therapy for improved mobility, pain relief, and chronic condition recovery.</p><div class="sprice">$115 / hour</div></div>
-    </a>
-    <a href="personal-training.html" class="scard">
-      <div class="simg"><img style="object-position:center 28%" src="boxercise.jpg" alt="Boxercise HIIT" loading="lazy" ></div>
-      <div class="sbody"><h3>Boxercise HIIT</h3><p>Boxing-inspired high-intensity cardio. Build strength, burn fat, and have fun doing it.</p><div class="sprice">Contact for Pricing</div></div>
-    </a>
-    <a href="therapeutic-services.html" class="scard">
-      <div class="simg"><img style="object-position:center 50%" src="hotstone.jpg" alt="Hot Stone Massage" loading="lazy"></div>
-      <div class="sbody"><h3>Hot Stone Massage</h3><p>Deep muscle release through therapeutic heat. Ideal for chronic tension and recovery.</p><div class="sprice">$160 / hour</div></div>
-    </a>
-    <a href="therapeutic-services.html" class="scard">
-      <div class="simg"><img style="object-position:center 62%" src="thai.jpg" alt="Thai Massage" loading="lazy" ></div>
-      <div class="sbody"><h3>Thai Massage</h3><p>Traditional assisted stretching with acupressure for full-body relief and flexibility.</p><div class="sprice">$140 / hour</div></div>
-    </a>
-    <a href="https://atmmobility.noterro.com" target="_blank" class="scard book-trigger">
-      <div class="simg"><img style="object-position:center 40%" src="sauna.jpg" alt="Sauna Blanket Therapy" loading="lazy"></div>
-      <div class="sbody"><h3>Sauna Blanket Therapy</h3><p>Infrared sauna sessions for detox, circulation, muscle recovery, and deep relaxation.</p><div class="sprice">Contact for Pricing</div></div>
-    </a>
-    <a href="personal-training.html" class="scard">
-      <div class="simg"><img style="object-position:center 55%" src="group.jpg" alt="Group Training" loading="lazy" ></div>
-      <div class="sbody"><h3>Group Training</h3><p>Small group sessions for families, friends, or teams. Motivating and results-driven.</p><div class="sprice">Contact for Pricing</div></div>
-    </a>
+  <p class="sub">Therapeutic care and high-performance training — something for every goal and every body.</p>
+  <div class="svc-cols">
+    <!-- THERAPY COLUMN -->
+    <div>
+      <div class="svc-col-head"><div class="col-icon">RX</div><span>Therapeutic Care</span></div>
+      <div class="svc-grid">
+        <a href="therapeutic-services.html" class="scard">
+          <div class="simg"><img style="object-position:center 35%" src="fst.jpg" alt="FST Therapy" loading="lazy"></div>
+          <div class="sbody"><h3>FST Stretch Therapy</h3><p>Fascial Stretch Therapy for mobility, pain relief, and chronic condition recovery.</p><div class="sprice">$115 / hour</div></div>
+        </a>
+        <a href="therapeutic-services.html" class="scard">
+          <div class="simg"><img style="object-position:center 50%" src="hotstone.jpg" alt="Hot Stone Massage" loading="lazy"></div>
+          <div class="sbody"><h3>Hot Stone Massage</h3><p>Deep muscle release through therapeutic heat. Ideal for chronic tension and recovery.</p><div class="sprice">$160 / hour</div></div>
+        </a>
+        <a href="therapeutic-services.html" class="scard">
+          <div class="simg"><img style="object-position:center 62%" src="thai.jpg" alt="Thai Massage" loading="lazy"></div>
+          <div class="sbody"><h3>Thai Massage</h3><p>Traditional assisted stretching with acupressure for full-body relief and flexibility.</p><div class="sprice">$140 / hour</div></div>
+        </a>
+        <a href="https://atmmobility.noterro.com" target="_blank" class="scard book-trigger">
+          <div class="simg"><img style="object-position:center 40%" src="sauna.jpg" alt="Sauna Blanket Therapy" loading="lazy"></div>
+          <div class="sbody"><h3>Sauna Blanket Therapy</h3><p>Infrared sauna for detox, circulation, muscle recovery, and deep relaxation.</p><div class="sprice">Contact for Pricing</div></div>
+        </a>
+      </div>
+    </div>
+    <!-- TRAINING COLUMN -->
+    <div>
+      <div class="svc-col-head"><div class="col-icon">FT</div><span>Training</span></div>
+      <div class="svc-grid">
+        <a href="personal-training.html" class="scard">
+          <div class="simg"><img style="object-position:center 40%" src="training.jpg" alt="Personal Training" loading="lazy"></div>
+          <div class="sbody"><h3>Personal Training</h3><p>One-on-one coaching built around your goals — strength, weight loss, mobility, or performance.</p><div class="sprice">Contact for Pricing →</div></div>
+        </a>
+        <a href="adaptive-training.html" class="scard">
+          <div class="simg"><img style="object-position:center 30%" src="adaptive.jpg" alt="Adaptive Training" loading="lazy"></div>
+          <div class="sbody"><h3>Adaptive Training</h3><p>Patient, sensory-aware training for neurodiverse youth tailored to your child's unique needs.</p><div class="sprice">Custom Pricing →</div></div>
+        </a>
+        <a href="personal-training.html" class="scard">
+          <div class="simg"><img style="object-position:center 28%" src="boxercise.jpg" alt="Boxercise HIIT" loading="lazy"></div>
+          <div class="sbody"><h3>Boxercise HIIT</h3><p>Boxing-inspired high-intensity cardio. Build strength, burn fat, and have fun doing it.</p><div class="sprice">Contact for Pricing</div></div>
+        </a>
+        <a href="personal-training.html" class="scard">
+          <div class="simg"><img style="object-position:center 55%" src="group.jpg" alt="Group Training" loading="lazy"></div>
+          <div class="sbody"><h3>Group Training</h3><p>Small group sessions for families, friends, or teams. Motivating and results-driven.</p><div class="sprice">Contact for Pricing</div></div>
+        </a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -476,7 +493,7 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
 <section id="adaptive" class="adaptive-sec reveal">
   <div class="adaptive-layout">
     <div class="adapt-photo">
-      <img style="object-position:center 40%" src="training.jpg" alt="Adaptive training for neurodiverse youth">
+      <img style="object-position:center 30%" src="adaptive.jpg" alt="Adaptive training for neurodiverse youth">
     </div>
     <div class="adapt-content">
       <div class="eyebrow"><div class="ln"></div><span>Specialized Care</span></div>
@@ -495,6 +512,33 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
         <li>Available at our center or your home</li>
       </ul>
       <a href="adaptive-training.html" class="btn-r">Learn More →</a>
+    </div>
+  </div>
+</section>
+
+<!-- THERAPEUTIC CARE HIGHLIGHT -->
+<section id="therapeutic" class="adaptive-sec reveal" style="background:var(--blk2)">
+  <div class="adaptive-layout">
+    <div class="adapt-content">
+      <div class="eyebrow"><div class="ln"></div><span>Therapeutic Care</span></div>
+      <h2>HEALING FOR <span class="r">CHRONIC CONDITIONS</span></h2>
+      <p class="sub">Whether you're managing chronic pain, recovering from injury, or seeking relief from long-term tension — our therapy services are built around your body's needs.</p>
+      <div class="atags">
+        <span class="atag">Chronic Pain</span>
+        <span class="atag">Injury Recovery</span>
+        <span class="atag">Muscle Tension</span>
+        <span class="atag">Mobility &amp; Flexibility</span>
+      </div>
+      <ul class="alist">
+        <li>Registered Massage Therapy (RMT) for insurance billing</li>
+        <li>Fascial Stretch Therapy for deep mobility work</li>
+        <li>Hot Stone &amp; Thai Massage for tension and recovery</li>
+        <li>Available in-studio or mobile across the GTA</li>
+      </ul>
+      <a href="therapeutic-services.html" class="btn-r">Learn More →</a>
+    </div>
+    <div class="adapt-photo">
+      <img style="object-position:center 50%" src="hotstone.jpg" alt="Therapeutic massage and bodywork">
     </div>
   </div>
 </section>
@@ -549,6 +593,7 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
       <p class="sub">Questions about services, the center, or practitioner space? We're here.</p>
       <div class="c-rows">
         <div class="crow"><div class="cicon">E</div><span><a href="mailto:info@atmmobility.com">info@atmmobility.com</a></span></div>
+        <div class="crow"><div class="cicon">P</div><span><a href="tel:+14164321684">+1 (416) 432-1684</a></span></div>
         <div class="crow"><div class="cicon">A</div><span>542 Champagne Dr., North York, ON</span></div>
         <div class="crow"><div class="cicon">IG</div><span><a href="https://instagram.com/a2mfitness" target="_blank">@a2mfitness</a></span></div>
         <div class="crow"><div class="cicon">BK</div><span><a href="https://atmmobility.noterro.com" target="_blank">atmmobility.noterro.com</a></span></div>
