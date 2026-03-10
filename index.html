@@ -156,7 +156,7 @@ h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3rem);letter-spa
 .space-sec .sub{color:rgba(255,255,255,.5);max-width:100%}
 .space-layout{display:flex;flex-direction:column;gap:2.5rem}
 .space-text{max-width:600px}
-.space-feats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.5rem 0 2rem}
+.space-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0 2rem}
 .sfeat{background:rgba(255,255,255,.04);border:1px solid rgba(200,16,46,.2);border-radius:4px;padding:1rem;border-top:2px solid var(--red)}
 .sfeat h4{font-size:.82rem;font-weight:700;color:var(--wht);letter-spacing:.06em;margin-bottom:.15rem;text-transform:uppercase}
 .sfeat p{font-size:.72rem;color:rgba(255,255,255,.38);line-height:1.5}
@@ -175,7 +175,7 @@ h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3rem);letter-spa
 .scard{background:var(--wht);text-decoration:none;display:flex;align-items:stretch;transition:box-shadow .2s}
 .scard:hover .simg img{transform:scale(1.06)}
 .scard:hover .sbody{border-left-color:var(--red)}
-.simg{width:110px;min-width:110px;overflow:hidden}
+.simg{width:110px;min-width:110px;height:100px;overflow:hidden}
 .simg img{width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block;transition:transform .45s}
 .sbody{padding:.85rem 1rem;border-left:3px solid transparent;transition:border-color .2s;flex:1}
 .sbody h3{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.04em;margin-bottom:.18rem;color:var(--blk)}
@@ -401,18 +401,16 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
     <div class="space-text">
       <div class="eyebrow"><div class="ln"></div><span>Our Facility</span></div>
       <h2>AN INTEGRATED <span class="r">WELLNESS CENTER</span></h2>
-      <p class="sub">Fully equipped facility in the GTA — dedicated training studio, private treatment rooms, and sauna suite. We also offer mobile sessions for clients who prefer home visits.</p>
+      <p class="sub">Fully equipped facility in the GTA — dedicated training studio and a private treatment room. We also offer mobile sessions for clients who prefer home visits.</p>
       <div class="space-feats">
         <div class="sfeat"><h4>Training Studio</h4><p>Strength &amp; conditioning space</p></div>
         <div class="sfeat"><h4>Treatment Room</h4><p>Private massage &amp; FST room</p></div>
-        <div class="sfeat"><h4>Sauna Blanket</h4><p>Infrared sauna blanket sessions</p></div>
         <div class="sfeat"><h4>Mobile Available</h4><p>Most services come to you</p></div>
       </div>
       <a href="https://atmmobility.noterro.com" target="_blank" class="btn-r book-trigger">Book at Our Center</a>
     </div>
-    <div class="space-photos">
+    <div class="space-photos" style="grid-template-columns:1fr 1fr">
       <div class="sphoto"><img style="object-position:center 50%" src="hotstone.jpg" alt="Treatment room" loading="lazy"></div>
-      <div class="sphoto"><img style="object-position:center 40%" src="sauna.jpg" alt="Sauna therapy" loading="lazy"></div>
       <div class="sphoto"><img style="object-position:center 62%" src="thai.jpg" alt="Thai massage" loading="lazy"></div>
     </div>
   </div>
@@ -521,7 +519,7 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
   <div class="adaptive-layout">
     <div class="adapt-content">
       <div class="eyebrow"><div class="ln"></div><span>Therapeutic Care</span></div>
-      <h2>HEALING FOR <span class="r">CHRONIC CONDITIONS</span></h2>
+      <h2>THERAPEUTIC CARE FOR <span class="r">CHRONIC CONDITIONS</span></h2>
       <p class="sub">Whether you're managing chronic pain, recovering from injury, or seeking relief from long-term tension — our therapy services are built around your body's needs.</p>
       <div class="atags">
         <span class="atag">Chronic Pain</span>
