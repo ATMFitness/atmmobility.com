@@ -73,59 +73,9 @@ const API_BASE='https://atm-leads.w-althea.workers.dev';
 const form=document.getElementById('stretch-form'), errorBox=document.getElementById('error'), submitBtn=document.getElementById('submit-btn'), concern=document.getElementById('primary_concern'), otherWrap=document.getElementById('other-wrap'), other=document.getElementById('concern_other');
 concern.addEventListener('change',()=>{const isOther=concern.value==='Other';otherWrap.classList.toggle('hidden',!isOther);other.required=isOther;});
 function showError(message){errorBox.textContent=message;errorBox.style.display='block';errorBox.scrollIntoView({behavior:'smooth',block:'center'});}function validEmail(email){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)}function phoneDigits(phone){return String(phone||'').replace(/\D/g,'')}
-form.addEventListener('submit',async e=>{e.preventDefault();errorBox.style.display='none';const fd=new FormData(form);const data=Object.fromEntries(fd.entries());data.waiver_agreed=document.getElementById('waiver_agreed').checked;data.marketing_consent=document.getElementById('marketing_consent').checked;if(!data.first_name||!data.last_name)return showError('Please enter your first and last name.');if(!validEmail(data.email))return showError('Please enter a valid email address.');if(phoneDigits(data.phone).length<10)return showError('Please enter a valid mobile phone number.');if(!data.primary_concern)return showError('Please select your main concern.');if(data.primary_concern==='Other'&&!data.concern_other)return showError('Please tell us your concern.');if(!data.waiver_agreed)return showError('Please agree to the waiver before participating.');submitBtn.disabled=true;submitBtn.textContent='Submitting...';try{const res=await fetch(`${API_BASE}/api/leads/stretch-reset`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)});const out=await res.json().catch(()=>({}));if(!res.ok||!out.ok)throw new Error(out.error||'Something went wrong.');if(out.lead_id&&out.validation_token){localStorage.setItem('atm_pending_lead_id',out.lead_id);localStorage.setItem('atm_pending_validation_token',out.validation_token);localStorage.setItem('atm_pending_email',data.email||'');}document.getElementById('form-panel').style.display='none';document.getElementById('thank-panel').style.display='block';window.scrollTo({top:0,behavior:'smooth'});}catch(err){showError(err.message||'Something went wrong.');}finally{submitBtn.disabled=false;submitBtn.textContent='Submit Waiver';}});
+form.addEventListener('submit',async e=>{e.preventDefault();errorBox.style.display='none';const fd=new FormData(form);const data=Object.fromEntries(fd.entries());data.waiver_agreed=document.getElementById('waiver_agreed').checked;data.marketing_consent=document.getElementById('marketing_consent').checked;if(!data.first_name||!data.last_name)return showError('Please enter your first and last name.');if(!validEmail(data.email))return showError('Please enter a valid email address.');if(phoneDigits(data.phone).length<10)return showError('Please enter a valid mobile phone number.');if(!data.primary_concern)return showError('Please select your main concern.');if(data.primary_concern==='Other'&&!data.concern_other)return showError('Please tell us your concern.');if(!data.waiver_agreed)return showError('Please agree to the waiver before participating.');submitBtn.disabled=true;submitBtn.textContent='Submitting...';try{const res=await fetch(`${API_BASE}/api/leads/stretch-reset`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)});const out=await res.json().catch(()=>({}));if(!res.ok||!out.ok)throw new Error(out.error||'Something went wrong.');if(out.lead_id){localStorage.setItem('atm_pending_lead_id',out.lead_id);}document.getElementById('confirm-name').textContent=`Name: ${data.first_name} ${data.last_name}`;document.getElementById('confirm-email').textContent=`Email: ${data.email}`;document.getElementById('form-panel').style.display='none';document.getElementById('thank-panel').style.display='block';window.scrollTo({top:0,behavior:'smooth'});}catch(err){showError(err.message||'Something went wrong.');}finally{submitBtn.disabled=false;submitBtn.textContent='Submit Waiver';}});
 
-const scanBtn=document.getElementById('scan-staff-btn');
-const scannerVideo=document.getElementById('scanner-video');
-const scannerStatus=document.getElementById('scanner-status');
-let scannerStream=null;
-function setScannerStatus(msg,isError=false){if(scannerStatus){scannerStatus.textContent=msg;scannerStatus.style.color=isError?'#8a0018':'#777';}}
-function stopScanner(){if(scannerStream){scannerStream.getTracks().forEach(t=>t.stop());scannerStream=null;}if(scannerVideo)scannerVideo.style.display='none';}
-function staffCodeFromQr(text){try{const u=new URL(text);return u.searchParams.get('staff')||'';}catch(e){const m=String(text||'').match(/staff=([^&\s]+)/);return m?decodeURIComponent(m[1]):String(text||'').trim();}}
-async function completeStaffValidation(staffCode){
-  const leadId=localStorage.getItem('atm_pending_lead_id')||'';
-  const validationToken=localStorage.getItem('atm_pending_validation_token')||'';
-  if(!leadId||!validationToken)throw new Error('This device does not have a pending waiver. Please ask ATM staff for help.');
-  if(!staffCode)throw new Error('Staff QR code was not recognized. Please scan the ATM staff QR again.');
-  const res=await fetch(`${API_BASE}/api/leads/validate`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({lead_id:leadId,validation_token:validationToken,staff_code:staffCode})});
-  const out=await res.json().catch(()=>({}));
-  if(!res.ok||!out.ok)throw new Error(out.error||'Validation failed. Please ask ATM staff for help.');
-  localStorage.removeItem('atm_pending_lead_id');
-  localStorage.removeItem('atm_pending_validation_token');
-  document.getElementById('thank-panel').innerHTML=`<h2 style="color:var(--ok)">CHECK-IN COMPLETE</h2><p>Your voucher has been emailed.</p><div class="voucher"><div class="label">Voucher Code</div><div class="code">${String(out.voucher_code||'SENT').replace(/[&<>"']/g,'')}</div></div><p><strong>$20 credited toward your first full session.</strong></p><a class="book" href="${out.booking_url||'https://atmmobility.com'}" target="_blank" rel="noopener">Book With ATM</a><p class="small">If the email does not arrive, please confirm your email with the ATM team.</p>`;
-}
-async function startStaffQrScanner(){
-  try{
-    setScannerStatus('Opening camera. Please allow camera access.');
-    if(!('BarcodeDetector' in window)){
-      throw new Error('This phone browser cannot scan QR codes inside the page. Please ask ATM staff for help.');
-    }
-    scannerStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
-    scannerVideo.srcObject=scannerStream;
-    scannerVideo.style.display='block';
-    await scannerVideo.play();
-    const detector=new BarcodeDetector({formats:['qr_code']});
-    setScannerStatus('Point your camera at the ATM staff QR code.');
-    const scan=async()=>{
-      if(!scannerStream)return;
-      try{
-        const codes=await detector.detect(scannerVideo);
-        if(codes&&codes.length){
-          stopScanner();
-          setScannerStatus('Staff QR detected. Completing check-in...');
-          await completeStaffValidation(staffCodeFromQr(codes[0].rawValue));
-          return;
-        }
-      }catch(e){}
-      requestAnimationFrame(scan);
-    };
-    requestAnimationFrame(scan);
-  }catch(err){
-    stopScanner();
-    setScannerStatus(err.message||'Camera scan failed. Please ask ATM staff for help.',true);
-  }
-}
-if(scanBtn){scanBtn.addEventListener('click',startStaffQrScanner);}
+
 
 </script>
 </body>
