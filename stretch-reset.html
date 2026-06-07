@@ -29,13 +29,13 @@ html{scroll-behavior:smooth}body{font-family:"Barlow",sans-serif;background:var(
   <section class="hero">
     <div class="eyebrow"><div class="ln"></div><span>15-Minute Stretch Reset</span></div>
     <h1>STRETCH RESET <span class="r">WAIVER</span></h1>
-    <p>Complete this quick waiver before your 15-minute Stretch Reset. Your $20 voucher will be sent by email and can be used when you book your first full ATM Mobility &amp; Therapy session.</p>
+    <p>Complete this quick waiver before your 15-minute Stretch Reset. After submitting, please return to the ATM desk to complete check-in.</p>
   </section>
   <section class="section">
     <div class="shell">
       <div class="card">
         <div id="form-panel">
-          <div class="card-head"><h2>STRETCH RESET <span style="color:var(--red)">WAIVER</span></h2><p>This takes about 60 seconds. Your voucher will be emailed immediately after submission.</p></div>
+          <div class="card-head"><h2>STRETCH RESET <span style="color:var(--red)">WAIVER</span></h2><p>This takes about 60 seconds. After you submit, keep this page open and return to the ATM desk for check-in.</p></div>
           <form id="stretch-form" class="form" novalidate>
             <div id="error" class="error" role="alert"></div>
             <input type="hidden" name="campaign_id" value="fierce_fabulous_2026">
@@ -53,25 +53,24 @@ html{scroll-behavior:smooth}body{font-family:"Barlow",sans-serif;background:var(
           </form>
         </div>
         <div id="thank-panel" class="voucher-panel" aria-live="polite">
-          <h2>YOU'RE ALL SET</h2>
-          <p>Your waiver has been submitted and your voucher has been sent by email.</p>
-          <div class="voucher"><div class="label">Voucher Code</div><div class="code" id="voucher-code">ATM-XXXXXX</div></div>
-          <p><strong>$20 credited toward your first full session.</strong></p>
-          <a id="book-link" class="book" href="https://atmmobility.noterro.com" target="_blank" rel="noopener">Book With ATM</a>
-          <p class="small">A copy has been sent to your email. If you do not receive it, please confirm your email with the ATM team.</p>
+          <h2>WAIVER COMPLETE</h2>
+          <p>Your waiver has been submitted.</p>
+          <p><strong>Please keep this page open and return to the ATM Mobility &amp; Therapy desk to complete check-in.</strong></p>
+          <div class="voucher"><div class="label">Check-In Status</div><div class="code" id="validation-status" style="font-size:2rem">PENDING</div></div>
+          <p class="small">Once ATM staff validates your check-in, your $20 Stretch Reset voucher will be emailed to you.</p>
         </div>
       </div>
-      <aside class="side"><div class="offer"><h2>STIFF? SORE? <span class="r">TIGHT?</span></h2><ul><li>Complete the waiver before your Stretch Reset.</li><li>Receive your $20 voucher by email.</li><li>Book your first full session with ATM Mobility &amp; Therapy.</li></ul><p style="color:rgba(255,255,255,.62);line-height:1.6">Voucher applies to your first full ATM Mobility &amp; Therapy session. One voucher per person.</p></div></aside>
+      <aside class="side"><div class="offer"><h2>STIFF? SORE? <span class="r">TIGHT?</span></h2><ul><li>Complete the waiver before your Stretch Reset.</li><li>Return to the ATM desk for staff check-in.</li><li>Your $20 voucher will be emailed after validation.</li></ul><p style="color:rgba(255,255,255,.62);line-height:1.6">Voucher applies to your first full ATM Mobility &amp; Therapy session. One voucher per person.</p></div></aside>
     </div>
   </section>
 </div>
 <script>
 const h=document.getElementById('hamburger'),n=document.getElementById('navLinks');h.addEventListener('click',()=>n.classList.toggle('open'));n.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>n.classList.remove('open')));
-const API_BASE='https://atm-leads.w-althea.workers.dev';
+const API_BASE='';
 const form=document.getElementById('stretch-form'), errorBox=document.getElementById('error'), submitBtn=document.getElementById('submit-btn'), concern=document.getElementById('primary_concern'), otherWrap=document.getElementById('other-wrap'), other=document.getElementById('concern_other');
 concern.addEventListener('change',()=>{const isOther=concern.value==='Other';otherWrap.classList.toggle('hidden',!isOther);other.required=isOther;});
 function showError(message){errorBox.textContent=message;errorBox.style.display='block';errorBox.scrollIntoView({behavior:'smooth',block:'center'});}function validEmail(email){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)}function phoneDigits(phone){return String(phone||'').replace(/\D/g,'')}
-form.addEventListener('submit',async e=>{e.preventDefault();errorBox.style.display='none';const fd=new FormData(form);const data=Object.fromEntries(fd.entries());data.waiver_agreed=document.getElementById('waiver_agreed').checked;data.marketing_consent=document.getElementById('marketing_consent').checked;if(!data.first_name||!data.last_name)return showError('Please enter your first and last name.');if(!validEmail(data.email))return showError('Please enter a valid email address.');if(phoneDigits(data.phone).length<10)return showError('Please enter a valid mobile phone number.');if(!data.primary_concern)return showError('Please select your main concern.');if(data.primary_concern==='Other'&&!data.concern_other)return showError('Please tell us your concern.');if(!data.waiver_agreed)return showError('Please agree to the waiver before participating.');submitBtn.disabled=true;submitBtn.textContent='Submitting...';try{const res=await fetch(`${API_BASE}/api/leads/stretch-reset`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)});const out=await res.json().catch(()=>({}));if(!res.ok||!out.ok)throw new Error(out.error||'Something went wrong.');document.getElementById('voucher-code').textContent=out.voucher_code;document.getElementById('book-link').href=out.booking_url||'https://atmmobility.noterro.com';document.getElementById('form-panel').style.display='none';document.getElementById('thank-panel').style.display='block';window.scrollTo({top:0,behavior:'smooth'});}catch(err){showError(err.message||'Something went wrong.');}finally{submitBtn.disabled=false;submitBtn.textContent='Submit Waiver';}});
+form.addEventListener('submit',async e=>{e.preventDefault();errorBox.style.display='none';const fd=new FormData(form);const data=Object.fromEntries(fd.entries());data.waiver_agreed=document.getElementById('waiver_agreed').checked;data.marketing_consent=document.getElementById('marketing_consent').checked;if(!data.first_name||!data.last_name)return showError('Please enter your first and last name.');if(!validEmail(data.email))return showError('Please enter a valid email address.');if(phoneDigits(data.phone).length<10)return showError('Please enter a valid mobile phone number.');if(!data.primary_concern)return showError('Please select your main concern.');if(data.primary_concern==='Other'&&!data.concern_other)return showError('Please tell us your concern.');if(!data.waiver_agreed)return showError('Please agree to the waiver before participating.');submitBtn.disabled=true;submitBtn.textContent='Submitting...';try{const res=await fetch(`${API_BASE}/api/leads/stretch-reset`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)});const out=await res.json().catch(()=>({}));if(!res.ok||!out.ok)throw new Error(out.error||'Something went wrong.');if(out.lead_id&&out.validation_token){localStorage.setItem('atm_pending_lead_id',out.lead_id);localStorage.setItem('atm_pending_validation_token',out.validation_token);localStorage.setItem('atm_pending_email',data.email||'');}document.getElementById('form-panel').style.display='none';document.getElementById('thank-panel').style.display='block';window.scrollTo({top:0,behavior:'smooth'});}catch(err){showError(err.message||'Something went wrong.');}finally{submitBtn.disabled=false;submitBtn.textContent='Submit Waiver';}});
 </script>
 </body>
 </html>
