@@ -66,7 +66,7 @@ html{scroll-behavior:smooth}body{font-family:"Barlow",sans-serif;background:var(
 </div>
 <script>
 const h=document.getElementById('hamburger'),n=document.getElementById('navLinks');h.addEventListener('click',()=>n.classList.toggle('open'));n.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>n.classList.remove('open')));
-const API_BASE='';
+const API_BASE='https://atm-leads.w-althea.workers.dev';
 const form=document.getElementById('stretch-form'), errorBox=document.getElementById('error'), submitBtn=document.getElementById('submit-btn'), concern=document.getElementById('primary_concern'), otherWrap=document.getElementById('other-wrap'), other=document.getElementById('concern_other');
 concern.addEventListener('change',()=>{const isOther=concern.value==='Other';otherWrap.classList.toggle('hidden',!isOther);other.required=isOther;});
 function showError(message){errorBox.textContent=message;errorBox.style.display='block';errorBox.scrollIntoView({behavior:'smooth',block:'center'});}function validEmail(email){return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)}function phoneDigits(phone){return String(phone||'').replace(/\D/g,'')}

@@ -13,7 +13,7 @@
 <body>
 <div class="card"><div class="top"><div class="logo">ATM <span>MOBILITY &amp; THERAPY</span></div></div><div class="body" id="box"><h1 class="pending">CHECKING IN...</h1><p>Please wait while we validate your Stretch Reset waiver.</p></div></div>
 <script>
-const API_BASE='';
+const API_BASE='https://atm-leads.w-althea.workers.dev';
 const box=document.getElementById('box');
 const params=new URLSearchParams(location.search);
 const staffCode=params.get('staff')||'';
