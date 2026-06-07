@@ -54,13 +54,15 @@ html{scroll-behavior:smooth}body{font-family:"Barlow",sans-serif;background:var(
         </div>
         <div id="thank-panel" class="voucher-panel" aria-live="polite">
           <h2>WAIVER COMPLETE</h2>
-          <p>Your waiver has been submitted.</p>
-          <p><strong>Please keep this page open and return to the ATM Mobility &amp; Therapy desk.</strong></p>
-          <div class="voucher"><div class="label">Next Step</div><div class="code" id="validation-status" style="font-size:2rem">SCAN STAFF QR</div></div>
-          <p>ATM staff will show you a private check-in QR code. Tap the button below, allow camera access, and scan the staff QR code to complete check-in.</p>
-          <button class="btn" id="scan-staff-btn" type="button" style="max-width:360px;margin:10px auto 0;display:block;">Scan Staff QR Code</button>
-          <video id="scanner-video" playsinline muted style="display:none;width:100%;max-width:360px;margin:14px auto;border-radius:8px;background:#111;"></video>
-          <p class="small" id="scanner-status">Once ATM staff validates your check-in, your $20 Stretch Reset voucher will be emailed to you.</p>
+          <p>Your waiver has been submitted successfully.</p>
+          <div class="voucher">
+            <div class="label">Check-In Status</div>
+            <div class="code" id="validation-status" style="font-size:2rem">PENDING</div>
+          </div>
+          <p id="confirm-name" style="font-weight:700;color:#111;margin-top:10px;"></p>
+          <p id="confirm-email" class="small"></p>
+          <p><strong>Please show this screen to ATM Mobility &amp; Therapy staff to complete check-in.</strong></p>
+          <p class="small">After staff validation, your $20 Stretch Reset voucher will be emailed to you.</p>
         </div>
       </div>
       <aside class="side"><div class="offer"><h2>STIFF? SORE? <span class="r">TIGHT?</span></h2><ul><li>Complete the waiver before your Stretch Reset.</li><li>Return to the ATM desk for staff check-in.</li><li>Your $20 voucher will be emailed after validation.</li></ul><p style="color:rgba(255,255,255,.62);line-height:1.6">Voucher applies to your first full ATM Mobility &amp; Therapy session. One voucher per person.</p></div></aside>
