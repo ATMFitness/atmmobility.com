@@ -1,0 +1,17 @@
+ATM website cleanup — September 2026
+
+This package contains only three updated website files:
+
+- index.html
+- services.html
+- therapeutic-services.html
+
+In the existing ATMFitness/atmmobility.com GitHub repository, upload each file from this folder to the repository root and replace the matching existing file. Do not upload the deploy-cleanup folder itself and do not replace any other files.
+
+Commit the changes to main. GitHub Pages will publish the update automatically.
+
+What changes:
+
+- Services page: Adaptive Training reloads the correct existing adaptive image; Sauna Blanket Therapy is removed as a service card.
+- Homepage: Sauna Blanket Therapy is removed from the primary service grid, direct booking, gallery, and structured service list.
+- Therapeutic page: Sauna Blanket Therapy is no longer a full service card; it appears only as an optional recovery add-on beside a therapeutic appointment.
