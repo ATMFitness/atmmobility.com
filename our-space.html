@@ -21,6 +21,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(15,15,15,.97
 .nav-links{display:flex;align-items:center;gap:0;list-style:none}
 .nav-links a{color:var(--sil);text-decoration:none;font-size:.76rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:.38rem .55rem;border-radius:3px;transition:color .18s,background .18s;white-space:nowrap}
 .nav-links a:hover{color:var(--wht);background:rgba(200,16,46,.2)}
+.nav-links a.space-link{border:1px solid rgba(200,16,46,.78);color:var(--wht)!important;margin-right:.2rem}
+.nav-links a.space-link:hover{background:rgba(200,16,46,.28);border-color:var(--red)}
 .nav-links a.hl{background:var(--red);color:var(--wht)!important;padding:.38rem .85rem}
 .nav-links a.active{color:var(--red)}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
@@ -47,6 +49,14 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
 .fcopy{font-size:.7rem;color:rgba(255,255,255,.22)}
 @media(max-width:700px){.nav-links{display:none;flex-direction:column;position:fixed;top:62px;left:0;right:0;background:rgba(15,15,15,.98);padding:1.5rem 5%;gap:.35rem;border-top:1px solid rgba(200,16,46,.3)}.nav-links.open{display:flex}.hamburger{display:flex}}
 
+
+.space-cta-wrap{padding:28px 5% 0;background:var(--off)}
+.space-cta{max-width:1100px;margin:0 auto;background:linear-gradient(135deg,#111 0%,#1b1b1b 72%,#2b0710 100%);color:var(--wht);border-left:5px solid var(--red);border-radius:5px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:2rem;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+.space-cta-copy{max-width:720px}
+.space-cta .eyebrow{margin-bottom:.45rem}
+.space-cta h2{color:var(--wht);margin-bottom:.45rem}
+.space-cta p{color:rgba(255,255,255,.68);line-height:1.65;font-size:.95rem}
+@media(max-width:700px){.space-cta{align-items:flex-start;flex-direction:column;gap:1.1rem;padding:22px}.space-cta .btn-r{width:100%;text-align:center}}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
 .feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0 2rem}
 .feat{background:var(--off);border-top:2px solid var(--red);padding:1.2rem}
@@ -97,7 +107,8 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
       <li><a href="therapeutic-services.html">Therapeutic</a></li>
       <li><a href="team.html">Team</a></li>
       <li><a href="contact.html">Contact</a></li>
-      <li><a href="https://atmmobility.noterro.com" target="_blank" class="hl">Book Now</a></li>
+      <li><a href="https://atm-practice-manager.onrender.com/request-space" class="space-link">Book a Space</a></li>
+      <li><a href="https://atm-practice-manager.onrender.com/schedule" class="hl">Book Now</a></li>
     </ul>
     <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
@@ -108,6 +119,16 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
     <div class="eyebrow"><div class="ln"></div><span>542 Champagne Dr., North York</span></div>
     <h1>OUR <span class="r">SPACE</span></h1>
     <p>An integrated wellness center with dedicated training, treatment, and recovery facilities — plus mobile service across the GTA.</p>
+  </div>
+</div>
+<div class="space-cta-wrap">
+  <div class="space-cta">
+    <div class="space-cta-copy">
+      <div class="eyebrow"><div class="ln"></div><span>Practitioner Space</span></div>
+      <h2>NEED SPACE FOR <span class="r">YOUR PRACTICE?</span></h2>
+      <p>ATM offers professional treatment and training space for independent practitioners. Tell us what you do, the space you need, and your preferred schedule.</p>
+    </div>
+    <a href="https://atm-practice-manager.onrender.com/request-space" class="btn-r">Book a Space</a>
   </div>
 </div>
 <section class="sec">
@@ -153,7 +174,8 @@ footer{background:var(--blk);border-top:2px solid var(--red2);padding:1.8rem 5%;
     <a href="team.html">Team</a>
     <a href="contact.html">Contact</a>
     <a href="https://instagram.com/a2mfitness" target="_blank">@a2mfitness</a>
-    <a href="https://atmmobility.noterro.com" target="_blank" style="color:var(--red)">Book Now</a>
+    <a href="https://atm-practice-manager.onrender.com/request-space">Book a Space</a>
+    <a href="https://atm-practice-manager.onrender.com/schedule" style="color:var(--red)">Book Now</a>
   </div>
   <div class="fcopy">&copy; 2025 ATM Mobility &amp; Therapy &middot; North York, GTA</div>
 </footer>
