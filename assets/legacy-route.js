@@ -3,7 +3,7 @@ const fragments = {
   'personal-training.html': ['personal-training'],
   'therapeutic-services.html': ['therapeutic-care', 'fst', 'hot-stone', 'thai'],
   'team.html': ['team'],
-  'our-space.html': ['centre', 'practitioner-space']
+  'our-space.html': ['centre', 'professional-space']
 };
 
 if (target) {
