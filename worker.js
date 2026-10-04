@@ -6,7 +6,7 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
 
 // worker.js
 
-var SYSTEM_VERSION = "atm-leads-v21-nankind-choice-flow-2026-10";
+var SYSTEM_VERSION = "atm-leads-v23-nankind-single-path-2026-10";
 
 var WAIVER_VERSION = "stretch-reset-waiver-v2-2026-06";
 
@@ -350,13 +350,11 @@ function submissionPlan(campaignId, requestedType) {
     return { type: "waiver_and_voucher", signsWaiver: true, issuesVoucher: true, requiresStaffValidation: true };
   }
 
-  const plans = {
-    voucher_only: { type: "voucher_only", signsWaiver: false, issuesVoucher: true, requiresStaffValidation: false },
-    waiver_only: { type: "waiver_only", signsWaiver: true, issuesVoucher: false, requiresStaffValidation: false },
-    waiver_and_voucher: { type: "waiver_and_voucher", signsWaiver: true, issuesVoucher: true, requiresStaffValidation: false }
-  };
+  if (!requestedType || requestedType === "waiver_and_voucher") {
+    return { type: "waiver_and_voucher", signsWaiver: true, issuesVoucher: true, requiresStaffValidation: false };
+  }
 
-  return plans[requestedType] || null;
+  return null;
 
 }
 
@@ -452,9 +450,9 @@ async function createStretchResetLead(request, env) {
 
   if (!campaign) return json(request, env, { ok: false, error: "This campaign is not active." }, 400);
 
-  const plan = submissionPlan(campaign.id, requestedType || (campaign.id === NANKIND_CAMPAIGN_ID ? "" : "waiver_and_voucher"));
+  const plan = submissionPlan(campaign.id, requestedType || "waiver_and_voucher");
 
-  if (!plan) return json(request, env, { ok: false, error: "Please choose voucher only, waiver only, or waiver and voucher." }, 400);
+  if (!plan) return json(request, env, { ok: false, error: "This campaign requires the participation waiver and includes one voucher." }, 400);
 
   if (plan.signsWaiver && !validPhone(phone)) return json(request, env, { ok: false, error: "Please enter a valid mobile phone number." }, 400);
 
@@ -487,11 +485,11 @@ async function createStretchResetLead(request, env) {
 
     FROM leads l
 
-    LEFT JOIN vouchers v ON v.lead_id = l.id AND (v.status = 'issued' OR l.campaign_id = 'nankind_small_world_2026')
+    LEFT JOIN vouchers v ON v.lead_id = l.id AND (v.status = 'issued' OR (l.campaign_id = 'nankind_small_world_2026' AND v.status IN ('redeemed', 'expired')))
 
     WHERE l.email = ? AND l.campaign_id = ? AND COALESCE(l.validation_status, 'pending_validation') != 'void'
 
-    ORDER BY l.created_at DESC, v.issued_at DESC
+    ORDER BY CASE WHEN v.id IS NOT NULL THEN 1 ELSE 0 END DESC, l.created_at DESC, v.issued_at DESC
 
     LIMIT 1
 
@@ -505,6 +503,7 @@ async function createStretchResetLead(request, env) {
 
       let hasWaiver = Boolean(existing.has_waiver);
       let voucher = existing.voucher_id && existing.code ? { code: existing.code, expiresAt: existing.expires_at } : null;
+      const voucherPreviouslyIssued = Boolean(voucher);
 
       if (plan.signsWaiver && !hasWaiver) {
         const waiverId = uid("waiver_");
@@ -540,11 +539,14 @@ async function createStretchResetLead(request, env) {
         lead_id: existing.lead_id,
         has_waiver: hasWaiver,
         voucher_issued: Boolean(voucher),
+        voucher_previously_issued: voucherPreviouslyIssued,
         voucher_code: voucher?.code || null,
         expires_at: voucher?.expiresAt || null,
         email_sent: voucher?.emailResult ? voucher.emailResult.failed === 0 && voucher.emailResult.sent > 0 : undefined,
         booking_url: campaign.noterro_url || env.NOTERRO_URL,
-        message: hasWaiver && voucher ? "Your waiver is on file and your voucher is ready." : hasWaiver ? "Your waiver is on file. No voucher was requested." : "Your voucher is ready; no session waiver was signed."
+        message: voucherPreviouslyIssued
+          ? `${hasWaiver ? "Your waiver is on file. " : ""}A voucher already exists for this email, so no additional voucher was created. Use the code shown below; contact ATM Mobility & Therapy if you cannot find the original email.`
+          : hasWaiver && voucher ? "Your waiver is on file and your voucher is ready." : hasWaiver ? "Your waiver is on file. No voucher was requested." : "Your voucher is ready; no session waiver was signed."
       });
 
     }
