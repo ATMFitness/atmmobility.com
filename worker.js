@@ -6,17 +6,25 @@ var __name = (target, value) => __defProp(target, "name", { value, configurable:
 
 // worker.js
 
-var SYSTEM_VERSION = "atm-leads-v19-nankind-60-day-2026-10";
+var SYSTEM_VERSION = "atm-leads-v21-nankind-choice-flow-2026-10";
 
 var WAIVER_VERSION = "stretch-reset-waiver-v2-2026-06";
 
+var NANKIND_WAIVER_VERSION = "thai-massage-fst-waiver-v1-2026-10";
+
 var DEFAULT_CAMPAIGN_ID = "black_owned_to_2026";
+
+var NANKIND_CAMPAIGN_ID = "nankind_small_world_2026";
 
 var VOUCHER_VALUE_CENTS = 2e3;
 
 var CONSENT_TEXT = "I would like to receive my $20 Stretch Reset voucher and occasional appointment reminders from ATM Mobility & Therapy.";
 
+var NANKIND_CONSENT_TEXT = "I agree to receive email reminders about my voucher, including its expiry. My $20 Reset voucher will be emailed after I submit this form whether or not I opt in to reminders.";
+
 var WAIVER_TEXT = `I understand that the 15-Minute Stretch Reset is a wellness and mobility service. It is not medical treatment, diagnosis, physiotherapy, chiropractic care, or emergency care. I confirm that I am voluntarily participating and that I will tell the practitioner immediately if I experience pain, dizziness, numbness, tingling, shortness of breath, or discomfort. I understand that all stretching and mobility activities involve some risk, and I release ATM Mobility & Therapy, its practitioners, representatives, and event partners from liability arising from my voluntary participation, except where prohibited by law.`;
+
+var NANKIND_WAIVER_TEXT = `I understand that this 15-minute Reset combines Thai massage techniques with assisted Fascial Stretch Therapy (FST) as a wellness and mobility service. It is not medical treatment, diagnosis, physiotherapy, chiropractic care, or emergency care. I understand that the session involves hands-on contact, applied pressure, movement, and assisted stretching, and that I may decline a technique, ask for less pressure, change position, or stop at any time. I confirm that I am voluntarily participating and will tell the practitioner immediately if I experience pain, dizziness, numbness, tingling, shortness of breath, or discomfort. I understand that these activities involve some risk, and I release ATM Mobility & Therapy, its practitioners, representatives, and event partners from liability arising from my voluntary participation, except where prohibited by law.`;
 
 var CONCERNS = /* @__PURE__ */ new Set([
 
@@ -336,6 +344,70 @@ async function getCampaign(env, id) {
 
 __name(getCampaign, "getCampaign");
 
+function submissionPlan(campaignId, requestedType) {
+
+  if (campaignId !== NANKIND_CAMPAIGN_ID) {
+    return { type: "waiver_and_voucher", signsWaiver: true, issuesVoucher: true, requiresStaffValidation: true };
+  }
+
+  const plans = {
+    voucher_only: { type: "voucher_only", signsWaiver: false, issuesVoucher: true, requiresStaffValidation: false },
+    waiver_only: { type: "waiver_only", signsWaiver: true, issuesVoucher: false, requiresStaffValidation: false },
+    waiver_and_voucher: { type: "waiver_and_voucher", signsWaiver: true, issuesVoucher: true, requiresStaffValidation: false }
+  };
+
+  return plans[requestedType] || null;
+
+}
+
+__name(submissionPlan, "submissionPlan");
+
+async function issueImmediateCampaignVoucher(env, campaign, lead, marketingConsent, eventDetail) {
+
+  const voucherId = uid("voucher_");
+  const expiresAt = addDays(campaign.voucher_expiry_days || 60);
+  let code = voucherCode(campaign.voucher_prefix || "ATM");
+
+  for (let tries = 0; tries < 5; tries += 1) {
+    const existingCode = await env.DB.prepare("SELECT id FROM vouchers WHERE code = ?").bind(code).first();
+    if (!existingCode) break;
+    code = voucherCode(campaign.voucher_prefix || "ATM");
+  }
+
+  const issuedAt = nowIso();
+  await env.DB.batch([
+    env.DB.prepare(`INSERT INTO vouchers (id, code, lead_id, campaign_id, value_cents, expires_at)
+      VALUES (?, ?, ?, ?, ?, ?)`).bind(voucherId, code, lead.id, campaign.id, campaign.voucher_value_cents || VOUCHER_VALUE_CENTS, expiresAt),
+    env.DB.prepare(`UPDATE leads SET validation_status='validated', validated_at=?, updated_at=? WHERE id=?`).bind(issuedAt, issuedAt, lead.id),
+    env.DB.prepare(`INSERT INTO lead_events (id, lead_id, event_type, event_detail) VALUES (?, ?, 'voucher_issued', ?)`).bind(uid("evt_"), lead.id, eventDetail)
+  ]);
+
+  await queueLeadEmails(env, {
+    leadId: lead.id,
+    voucherId,
+    campaign: {
+      id: campaign.id,
+      name: campaign.name,
+      voucher_prefix: campaign.voucher_prefix,
+      voucher_value_cents: campaign.voucher_value_cents,
+      voucher_expiry_days: campaign.voucher_expiry_days,
+      noterro_url: campaign.noterro_url,
+      is_active: campaign.is_active
+    },
+    firstName: lead.first_name,
+    email: lead.email,
+    code,
+    expiresAt,
+    marketingConsent
+  });
+
+  const emailResult = await processEmailQueue(env, 5);
+  return { code, expiresAt, emailResult };
+
+}
+
+__name(issueImmediateCampaignVoucher, "issueImmediateCampaignVoucher");
+
 async function createStretchResetLead(request, env) {
 
   const rl = await rateLimit(request, env, "lead_submit", 8, 60 * 60);
@@ -368,21 +440,37 @@ async function createStretchResetLead(request, env) {
 
   const campaignId = clean(body.campaign_id || DEFAULT_CAMPAIGN_ID, 80);
 
+  const requestedType = clean(body.submission_type || "", 40);
+
   if (!firstName || !lastName) return json(request, env, { ok: false, error: "Please enter your first and last name." }, 400);
 
   if (!validEmail(email)) return json(request, env, { ok: false, error: "Please enter a valid email address." }, 400);
 
-  if (!validPhone(phone)) return json(request, env, { ok: false, error: "Please enter a valid mobile phone number." }, 400);
-
-  if (!CONCERNS.has(primaryConcern)) return json(request, env, { ok: false, error: "Please select your main concern." }, 400);
-
-  if (primaryConcern === "Other" && !concernOther) return json(request, env, { ok: false, error: "Please tell us your concern." }, 400);
-
-  if (!waiverAgreed) return json(request, env, { ok: false, error: "Please agree to the waiver before participating." }, 400);
+  if (phone && !validPhone(phone)) return json(request, env, { ok: false, error: "Please enter a valid mobile phone number." }, 400);
 
   const campaign = await getCampaign(env, campaignId);
 
   if (!campaign) return json(request, env, { ok: false, error: "This campaign is not active." }, 400);
+
+  const plan = submissionPlan(campaign.id, requestedType || (campaign.id === NANKIND_CAMPAIGN_ID ? "" : "waiver_and_voucher"));
+
+  if (!plan) return json(request, env, { ok: false, error: "Please choose voucher only, waiver only, or waiver and voucher." }, 400);
+
+  if (plan.signsWaiver && !validPhone(phone)) return json(request, env, { ok: false, error: "Please enter a valid mobile phone number." }, 400);
+
+  if (plan.signsWaiver && !CONCERNS.has(primaryConcern)) return json(request, env, { ok: false, error: "Please select your main concern." }, 400);
+
+  if (plan.signsWaiver && primaryConcern === "Other" && !concernOther) return json(request, env, { ok: false, error: "Please tell us your concern." }, 400);
+
+  if (plan.signsWaiver && !waiverAgreed) return json(request, env, { ok: false, error: "Please agree to the waiver before participating." }, 400);
+
+  const storedConcern = plan.signsWaiver ? primaryConcern : "Voucher only";
+
+  const effectiveMarketingConsent = plan.issuesVoucher && marketingConsent;
+
+  const consentText = campaign.id === NANKIND_CAMPAIGN_ID ? NANKIND_CONSENT_TEXT : CONSENT_TEXT;
+  const waiverText = campaign.id === NANKIND_CAMPAIGN_ID ? NANKIND_WAIVER_TEXT : WAIVER_TEXT;
+  const waiverVersion = campaign.id === NANKIND_CAMPAIGN_ID ? NANKIND_WAIVER_VERSION : WAIVER_VERSION;
 
   const ip = clientIp(request);
 
@@ -392,17 +480,18 @@ async function createStretchResetLead(request, env) {
 
   const existing = await env.DB.prepare(`
 
-    SELECT l.id AS lead_id, l.first_name, l.last_name, l.email, l.phone, l.validation_status, l.validation_token,
+    SELECT l.id AS lead_id, l.first_name, l.last_name, l.email, l.phone, l.marketing_consent, l.validation_status, l.validation_token,
 
-           v.id AS voucher_id, v.code, v.expires_at, v.status
+           v.id AS voucher_id, v.code, v.expires_at, v.status AS voucher_status,
+           EXISTS(SELECT 1 FROM waiver_signatures ws WHERE ws.lead_id = l.id AND ws.agreed = 1) AS has_waiver
 
     FROM leads l
 
-    LEFT JOIN vouchers v ON v.lead_id = l.id AND v.status = 'issued'
+    LEFT JOIN vouchers v ON v.lead_id = l.id AND (v.status = 'issued' OR l.campaign_id = 'nankind_small_world_2026')
 
     WHERE l.email = ? AND l.campaign_id = ? AND COALESCE(l.validation_status, 'pending_validation') != 'void'
 
-    ORDER BY l.created_at DESC
+    ORDER BY l.created_at DESC, v.issued_at DESC
 
     LIMIT 1
 
@@ -411,6 +500,54 @@ async function createStretchResetLead(request, env) {
   if (existing) {
 
     await env.DB.prepare(`INSERT INTO lead_events (id, lead_id, event_type, event_detail) VALUES (?, ?, 'duplicate_submission', ?)`).bind(uid("evt_"), existing.lead_id, `Re-submitted from ${phone}`).run();
+
+    if (campaign.id === NANKIND_CAMPAIGN_ID) {
+
+      let hasWaiver = Boolean(existing.has_waiver);
+      let voucher = existing.voucher_id && existing.code ? { code: existing.code, expiresAt: existing.expires_at } : null;
+
+      if (plan.signsWaiver && !hasWaiver) {
+        const waiverId = uid("waiver_");
+        await env.DB.batch([
+          env.DB.prepare(`INSERT INTO waiver_signatures (id, lead_id, waiver_version, waiver_text, signature_name, agreed, ip_hash, user_agent)
+            VALUES (?, ?, ?, ?, ?, 1, ?, ?)`).bind(waiverId, existing.lead_id, NANKIND_WAIVER_VERSION, NANKIND_WAIVER_TEXT, `${firstName} ${lastName}`, ipHash, userAgent),
+          env.DB.prepare(`UPDATE leads SET primary_concern=?, concern_other=?, notes=?, phone=?, updated_at=? WHERE id=?`).bind(primaryConcern, concernOther || null, notes || null, phone || null, nowIso(), existing.lead_id),
+          env.DB.prepare(`INSERT INTO lead_events (id, lead_id, event_type, event_detail) VALUES (?, ?, 'waiver_signed', ?)`).bind(uid("evt_"), existing.lead_id, "Waiver added after changing the Nankind submission choice")
+        ]);
+        hasWaiver = true;
+      }
+
+      if (effectiveMarketingConsent && !existing.marketing_consent) {
+        await env.DB.prepare(`UPDATE leads SET marketing_consent=1, consent_text=?, consent_at=?, updated_at=? WHERE id=?`)
+          .bind(NANKIND_CONSENT_TEXT, nowIso(), nowIso(), existing.lead_id).run();
+      }
+
+      if (plan.issuesVoucher && !voucher) {
+        voucher = await issueImmediateCampaignVoucher(env, campaign, {
+          id: existing.lead_id,
+          first_name: existing.first_name || firstName,
+          email
+        }, Boolean(existing.marketing_consent || effectiveMarketingConsent), `Issued after Nankind ${plan.type} submission`);
+      } else if (hasWaiver && !voucher) {
+        await env.DB.prepare(`UPDATE leads SET validation_status='validated', validated_at=?, updated_at=? WHERE id=?`)
+          .bind(nowIso(), nowIso(), existing.lead_id).run();
+      }
+
+      return json(request, env, {
+        ok: true,
+        duplicate: true,
+        complete: true,
+        lead_id: existing.lead_id,
+        has_waiver: hasWaiver,
+        voucher_issued: Boolean(voucher),
+        voucher_code: voucher?.code || null,
+        expires_at: voucher?.expiresAt || null,
+        email_sent: voucher?.emailResult ? voucher.emailResult.failed === 0 && voucher.emailResult.sent > 0 : undefined,
+        booking_url: campaign.noterro_url || env.NOTERRO_URL,
+        message: hasWaiver && voucher ? "Your waiver is on file and your voucher is ready." : hasWaiver ? "Your waiver is on file. No voucher was requested." : "Your voucher is ready; no session waiver was signed."
+      });
+
+    }
 
     if (existing.voucher_id && existing.code) {
 
@@ -430,7 +567,7 @@ async function createStretchResetLead(request, env) {
 
         booking_url: campaign.noterro_url || env.NOTERRO_URL,
 
-        message: "Your waiver was already submitted and validated. Please check your email for your voucher."
+        message: "Your earlier submission already has a voucher. Please check your email."
 
       });
 
@@ -456,25 +593,49 @@ async function createStretchResetLead(request, env) {
 
   const leadId = uid("lead_");
 
-  const waiverId = uid("waiver_");
-
   const validationToken = uid("val_");
 
-  const consentAt = marketingConsent ? nowIso() : null;
-
-  await env.DB.batch([
-
+  const waiverId = plan.signsWaiver ? uid("waiver_") : null;
+  const consentAt = effectiveMarketingConsent ? nowIso() : null;
+  const initialStatus = plan.requiresStaffValidation ? "pending_validation" : "validated";
+  const statements = [
     env.DB.prepare(`INSERT INTO leads (id, campaign_id, source, first_name, last_name, email, phone, primary_concern, concern_other, notes, marketing_consent, consent_text, consent_at, ip_hash, user_agent, validation_status, validation_token)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(leadId, campaign.id, campaign.source, firstName, lastName, email, phone || "", storedConcern, plan.signsWaiver ? concernOther || null : null, plan.signsWaiver ? notes || null : null, effectiveMarketingConsent ? 1 : 0, effectiveMarketingConsent ? consentText : null, consentAt, ipHash, userAgent, initialStatus, validationToken)
+  ];
 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending_validation', ?)`).bind(leadId, campaign.id, campaign.source, firstName, lastName, email, phone, primaryConcern, concernOther || null, notes || null, marketingConsent ? 1 : 0, marketingConsent ? CONSENT_TEXT : null, consentAt, ipHash, userAgent, validationToken),
+  if (plan.signsWaiver) {
+    statements.push(env.DB.prepare(`INSERT INTO waiver_signatures (id, lead_id, waiver_version, waiver_text, signature_name, agreed, ip_hash, user_agent)
+      VALUES (?, ?, ?, ?, ?, 1, ?, ?)`).bind(waiverId, leadId, waiverVersion, waiverText, `${firstName} ${lastName}`, ipHash, userAgent));
+  }
 
-    env.DB.prepare(`INSERT INTO waiver_signatures (id, lead_id, waiver_version, waiver_text, signature_name, agreed, ip_hash, user_agent)
+  statements.push(env.DB.prepare(`INSERT INTO lead_events (id, lead_id, event_type, event_detail) VALUES (?, ?, ?, ?)`)
+    .bind(uid("evt_"), leadId, plan.requiresStaffValidation ? "waiver_submitted_pending_validation" : "nankind_submission_complete", `Type: ${plan.type}; concern: ${storedConcern}`));
 
-      VALUES (?, ?, ?, ?, ?, 1, ?, ?)`).bind(waiverId, leadId, WAIVER_VERSION, WAIVER_TEXT, `${firstName} ${lastName}`, ipHash, userAgent),
+  await env.DB.batch(statements);
 
-    env.DB.prepare(`INSERT INTO lead_events (id, lead_id, event_type, event_detail) VALUES (?, ?, 'waiver_submitted_pending_validation', ?)`).bind(uid("evt_"), leadId, `Campaign: ${campaign.id}; concern: ${primaryConcern}`)
+  if (!plan.requiresStaffValidation) {
+    await env.DB.prepare(`UPDATE leads SET validated_at=?, updated_at=? WHERE id=?`).bind(nowIso(), nowIso(), leadId).run();
+  }
 
-  ]);
+  let voucher = null;
+  if (plan.issuesVoucher && !plan.requiresStaffValidation) {
+    voucher = await issueImmediateCampaignVoucher(env, campaign, { id: leadId, first_name: firstName, email }, effectiveMarketingConsent, `Issued after Nankind ${plan.type} submission`);
+  }
+
+  if (!plan.requiresStaffValidation) {
+    return json(request, env, {
+      ok: true,
+      complete: true,
+      lead_id: leadId,
+      has_waiver: plan.signsWaiver,
+      voucher_issued: Boolean(voucher),
+      voucher_code: voucher?.code || null,
+      expires_at: voucher?.expiresAt || null,
+      email_sent: voucher?.emailResult ? voucher.emailResult.failed === 0 && voucher.emailResult.sent > 0 : undefined,
+      booking_url: campaign.noterro_url || env.NOTERRO_URL,
+      message: plan.signsWaiver && voucher ? "Your waiver is on file and your voucher has been emailed." : plan.signsWaiver ? "Your waiver is on file. No voucher was requested." : "Your voucher has been emailed; no session waiver was signed."
+    });
+  }
 
   return json(request, env, {
 
@@ -533,6 +694,8 @@ async function validateStretchResetLead(request, env) {
   if (!row) return json(request, env, { ok: false, error: "Waiver not found for this device. Please ask ATM staff for help." }, 404);
 
   if (!row.is_active) return json(request, env, { ok: false, error: "This campaign is not active." }, 400);
+
+  if (row.campaign_id === NANKIND_CAMPAIGN_ID) return json(request, env, { ok: false, error: "This campaign does not use staff validation." }, 409);
 
   if (row.validation_status === "void") return json(request, env, { ok: false, error: "This waiver record has been voided." }, 409);
 
@@ -651,26 +814,31 @@ async function queueLeadEmails(env, data) {
   if (!data.marketingConsent) return;
   const bookingUrl = data.campaign.noterro_url || env.NOTERRO_URL;
   const schedule = reminderSchedule(data.campaign.voucher_expiry_days);
+  const offerName = data.campaign.id === NANKIND_CAMPAIGN_ID ? "Reset" : "Stretch Reset";
+  const mobilityChallengeCopy = data.campaign.id === NANKIND_CAMPAIGN_ID ? "" : "<p>When you tried the Mobility Challenge — turning your head, reaching behind your back, and touching your toes — did any movement feel tight?</p>";
+  const footerText = data.campaign.id === NANKIND_CAMPAIGN_ID ? "You received this because you selected the $20 Reset voucher at the Nankind event. Reply if you need help booking or want to stop receiving voucher reminders." : undefined;
   const f1 = emailTemplate({
-    title: "{{days_remaining}} days left on your Stretch Reset voucher",
+    title: `{{days_remaining}} days left on your ${offerName} voucher`,
     preview: "You have {{days_remaining}} days remaining to use your $20 credit.",
     greeting: `Hi ${escapeHtml(data.firstName)},`,
-    body: `<p>When you tried the Mobility Challenge — turning your head, reaching behind your back, and touching your toes — did any movement feel tight?</p>
-      <p>Your <strong>$20 Stretch Reset voucher</strong> has <strong>{{days_remaining}} days remaining</strong> and expires on <strong>{{expires_on}}</strong>.</p>`,
+    body: `${mobilityChallengeCopy}<p>Your <strong>$20 ${offerName} voucher</strong> has <strong>{{days_remaining}} days remaining</strong> and expires on <strong>{{expires_on}}</strong>.</p>
+      <p>Use it toward your first full ATM Mobility &amp; Therapy session.</p>`,
     bookingUrl,
-    voucherCode: data.code
+    voucherCode: data.code,
+    footerText
   });
-  await insertEmail(env, data, "followup_midpoint", "{{days_remaining}} days left on your Stretch Reset voucher", f1.html, f1.text, addDays(schedule.midpointDelayDays));
+  await insertEmail(env, data, "followup_midpoint", `{{days_remaining}} days left on your ${offerName} voucher`, f1.html, f1.text, addDays(schedule.midpointDelayDays));
   const f2 = emailTemplate({
-    title: "Your Stretch Reset voucher is expiring soon",
-    preview: "Your $20 Stretch Reset voucher has {{days_remaining}} days remaining.",
+    title: `Your ${offerName} voucher is expiring soon`,
+    preview: `Your $20 ${offerName} voucher has {{days_remaining}} days remaining.`,
     greeting: `Hi ${escapeHtml(data.firstName)},`,
-    body: `<p>Your Stretch Reset voucher expires soon. You have <strong>{{days_remaining}} days remaining</strong> to use your <strong>$20 credit</strong> toward your first full session.</p>
+    body: `<p>Your ${offerName} voucher expires soon. You have <strong>{{days_remaining}} days remaining</strong> to use your <strong>$20 credit</strong> toward your first full session.</p>
       <p>It expires on <strong>{{expires_on}}</strong>. Your voucher code is <strong>${escapeHtml(data.code)}</strong>.</p>`,
     bookingUrl,
-    voucherCode: data.code
+    voucherCode: data.code,
+    footerText
   });
-  await insertEmail(env, data, "followup_7_days_remaining", "Your Stretch Reset voucher is expiring soon", f2.html, f2.text, addDays(schedule.finalDelayDays));
+  await insertEmail(env, data, "followup_7_days_remaining", `Your ${offerName} voucher is expiring soon`, f2.html, f2.text, addDays(schedule.finalDelayDays));
 }
 
 __name(queueLeadEmails, "queueLeadEmails");
@@ -691,9 +859,13 @@ async function queueVoucherEmail(env, data, type) {
 
   const validityDays = Math.max(1, Number(data.campaign.voucher_expiry_days || 60));
 
+  const offerName = data.campaign.id === NANKIND_CAMPAIGN_ID ? "Reset" : "Stretch Reset";
+  const validityStart = data.campaign.id === NANKIND_CAMPAIGN_ID ? "from issue" : "from activation";
+  const footerText = data.campaign.id === NANKIND_CAMPAIGN_ID ? "You received this because you selected the $20 Reset voucher at the Nankind event. Reply if you need help booking or want to stop receiving voucher reminders." : undefined;
+
   const voucher = emailTemplate({
 
-    title: "Your $20 Stretch Reset Voucher",
+    title: `Your $20 ${offerName} Voucher`,
 
     preview: "Your ATM Mobility & Therapy voucher is ready.",
 
@@ -701,19 +873,20 @@ async function queueVoucherEmail(env, data, type) {
 
     body: `<p>Thank you for visiting <strong>ATM Mobility & Therapy</strong>.</p>
 
-      <p>Your voucher has been activated:</p>
+      <p>Your voucher has been issued:</p>
 
       <div class="code">${escapeHtml(data.code)}</div>
 
-      <p>This voucher gives you <strong>$20 credited toward your first full session</strong>. It is valid for <strong>${validityDays} days from activation</strong> and expires on <strong>${escapeHtml(expiry)}</strong>.</p>`,
+      <p>This voucher gives you <strong>$20 credited toward your first full session</strong>. It is valid for <strong>${validityDays} days ${validityStart}</strong> and expires on <strong>${escapeHtml(expiry)}</strong>.</p>`,
 
     bookingUrl,
 
-    voucherCode: data.code
+    voucherCode: data.code,
+    footerText
 
   });
 
-  await insertEmail(env, data, type, "Your $20 Stretch Reset Voucher", voucher.html, voucher.text, nowIso());
+  await insertEmail(env, data, type, `Your $20 ${offerName} Voucher`, voucher.html, voucher.text, nowIso());
 
 }
 
@@ -818,7 +991,7 @@ async function sendEmail(env, to, subject, html, textBody) {
 
 __name(sendEmail, "sendEmail");
 
-function emailTemplate({ title, preview, greeting, body, bookingUrl, voucherCode: voucherCode2 }) {
+function emailTemplate({ title, preview, greeting, body, bookingUrl, voucherCode: voucherCode2, footerText = "You received this because you submitted a Stretch Reset waiver or requested ATM Mobility & Therapy follow-up. Reply to this email if you need help booking or want to stop receiving reminders." }) {
 
   const safeTitle = escapeHtml(title);
 
@@ -828,9 +1001,11 @@ function emailTemplate({ title, preview, greeting, body, bookingUrl, voucherCode
 
   const safeVoucher = voucherCode2 ? escapeHtml(voucherCode2) : "";
 
+  const safeFooter = escapeHtml(footerText);
+
   const htmlBody = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle}</title>
 
-  <style>body{font-family:Arial,sans-serif;background:#f4f4f4;color:#111;margin:0;padding:24px}.pre{display:none!important;opacity:0;color:transparent;height:0;width:0;overflow:hidden}.card{max-width:640px;margin:auto;background:#fff;border-top:6px solid #c8102e;padding:28px;border-radius:6px}.logo{font-size:28px;font-weight:800;color:#c8102e;letter-spacing:.02em}.logo span{color:#111}.btn{display:inline-block;background:#c8102e;color:#fff!important;padding:13px 22px;text-decoration:none;font-weight:700;border-radius:3px}.code{font-size:30px;font-weight:800;letter-spacing:.08em;background:#111;color:#fff;padding:16px;text-align:center;margin:18px 0}.muted{color:#666}.foot{font-size:12px;color:#777;line-height:1.5;margin-top:24px}</style></head><body><div class="pre">${safePreview}</div><div class="card"><div class="logo">ATM <span>MOBILITY &amp; THERAPY</span></div><h1>${safeTitle}</h1><p>${greeting}</p>${body}<p><a class="btn" href="${safeBooking}">Book With ATM</a></p>${safeVoucher ? `<p class="muted">Voucher code: <strong>${safeVoucher}</strong></p>` : ""}<p class="muted">ATM Mobility &amp; Therapy<br>542 Champagne Dr., North York</p><p class="foot">You received this because you submitted a Stretch Reset waiver or requested ATM Mobility &amp; Therapy follow-up. Reply to this email if you need help booking or want to stop receiving reminders.</p></div></body></html>`;
+  <style>body{font-family:Arial,sans-serif;background:#f4f4f4;color:#111;margin:0;padding:24px}.pre{display:none!important;opacity:0;color:transparent;height:0;width:0;overflow:hidden}.card{max-width:640px;margin:auto;background:#fff;border-top:6px solid #c8102e;padding:28px;border-radius:6px}.logo{font-size:28px;font-weight:800;color:#c8102e;letter-spacing:.02em}.logo span{color:#111}.btn{display:inline-block;background:#c8102e;color:#fff!important;padding:13px 22px;text-decoration:none;font-weight:700;border-radius:3px}.code{font-size:30px;font-weight:800;letter-spacing:.08em;background:#111;color:#fff;padding:16px;text-align:center;margin:18px 0}.muted{color:#666}.foot{font-size:12px;color:#777;line-height:1.5;margin-top:24px}</style></head><body><div class="pre">${safePreview}</div><div class="card"><div class="logo">ATM <span>MOBILITY &amp; THERAPY</span></div><h1>${safeTitle}</h1><p>${greeting}</p>${body}<p><a class="btn" href="${safeBooking}">Book With ATM</a></p>${safeVoucher ? `<p class="muted">Voucher code: <strong>${safeVoucher}</strong></p>` : ""}<p class="muted">ATM Mobility &amp; Therapy<br>542 Champagne Dr., North York</p><p class="foot">${safeFooter}</p></div></body></html>`;
 
   const text2 = `${title}
 
@@ -1174,6 +1349,10 @@ async function adminValidateLead(request, env) {
 
   }
 
+  if (row.campaign_id === NANKIND_CAMPAIGN_ID && row.validation_status !== "pending_validation") {
+    return json(request, env, { ok: false, error: "Nankind vouchers are issued only when selected on the event form. This submission did not request a voucher." }, 409);
+  }
+
   const voucherId = uid("voucher_");
 
   const expiresAt = addDays(row.voucher_expiry_days || 60);
@@ -1401,10 +1580,6 @@ function reminderSchedule(expiryDays) {
 
 export {
 
-  worker_default as default,
-  daysRemaining,
-  reminderSchedule
+  worker_default as default
 
 };
-
-
